@@ -4,7 +4,6 @@ using GAIA;
 using GAIA.MainObject;
 using GAIA.Models;
 using GAIA.Module_UI;
-using LibVLCSharp.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Buffers;
@@ -15,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using Point = System.Windows.Point;
 
 namespace ANB_SSZ.Module_UI
@@ -44,38 +42,7 @@ namespace ANB_SSZ.Module_UI
         public LanguageMode languageModel = LanguageMode.Chinese;
 
         // RTSP 相關設定
-        private LibVLC _libVLC;
         private List<MediaPlayer> _mediaPlayers;
-
-        public LibVLC LibVLC0;
-        public LibVLC LibVLC1;
-        public LibVLC LibVLC2;
-        public LibVLC LibVLC3;
-        public LibVLC LibVLC4;
-        public LibVLC LibVLC5;
-        public LibVLC LibVLC6;
-        public LibVLC LibVLC7;
-        public LibVLC LibVLC8;
-
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam0;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam1;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam2;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam3;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam4;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam5;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam6;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam7;
-        public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam8;
-
-        public Media mediaCam0;
-        public Media mediaCam1;
-        public Media mediaCam2;
-        public Media mediaCam3;
-        public Media mediaCam4;
-        public Media mediaCam5;
-        public Media mediaCam6;
-        public Media mediaCam7;
-        public Media mediaCam8;
 
         // 用來計算即時影像的 FPS
         private DateTime LastFpsUpdate_Cam0 = DateTime.Now;
@@ -109,6 +76,9 @@ namespace ANB_SSZ.Module_UI
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
 
+        private int _currentStreamIndex = -1;
+        private string _networkInterfaceIp = "192.168.2.1"; // 指定使用的網卡 IP
+
         public GuideWindow()
         {
             InitializeComponent();
@@ -126,10 +96,10 @@ namespace ANB_SSZ.Module_UI
             // InitCamAsync();
 
             // 先關閉所有的 StackPanel
-            HideAndResetAllPanel();
+            //HideAndResetAllPanel();
 
             // 啟動即時影像
-            ConnectVideoCam();
+            //ConnectVideoCam();
         }
 
         // 用中介的方式來非同步啟動攝影機
@@ -1316,19 +1286,6 @@ namespace ANB_SSZ.Module_UI
             }
         }
 
-        public void clearLiveCamButtonIcon()
-        {
-            spnlLiveBtn0.Background = null;
-            spnlLiveBtn1.Background = null;
-            spnlLiveBtn2.Background = null;
-            spnlLiveBtn3.Background = null;
-            spnlLiveBtn4.Background = null;
-            spnlLiveBtn5.Background = null;
-            spnlLiveBtn6.Background = null;
-            spnlLiveBtn7.Background = null;
-            spnlLiveBtn8.Background = null;
-        }
-
         public void drawLiveCamButton()
         {
             // 若第一支攝影機是放映者
@@ -2255,15 +2212,6 @@ namespace ANB_SSZ.Module_UI
             spnlMode2Live.Visibility = Visibility.Hidden;
             cnsLive.Visibility = Visibility.Hidden;
             //mainVideoView.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam0.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam1.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam2.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam3.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam4.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam5.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam6.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam7.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam8.Visibility = Visibility.Hidden;
 
             // 盲區所有的 Panel
             spnlModeSP_01.Visibility = Visibility.Hidden;
@@ -3685,41 +3633,41 @@ namespace ANB_SSZ.Module_UI
             // 根據 camIndex 選擇相機
             switch (liveCamIndex)
             {
-                case 0:
-                    vdwMode2LiveCam0.Visibility = Visibility.Visible;
-                    break;
+                //case 0:
+                //    vdwMode2LiveCam0.Visibility = Visibility.Visible;
+                //    break;
 
-                case 1:
-                    vdwMode2LiveCam1.Visibility = Visibility.Visible;
-                    break;
+                //case 1:
+                //    vdwMode2LiveCam1.Visibility = Visibility.Visible;
+                //    break;
 
-                case 2:
-                    vdwMode2LiveCam2.Visibility = Visibility.Visible;
-                    break;
+                //case 2:
+                //    vdwMode2LiveCam2.Visibility = Visibility.Visible;
+                //    break;
 
-                case 3:
-                    vdwMode2LiveCam3.Visibility = Visibility.Visible;
-                    break;
+                //case 3:
+                //    vdwMode2LiveCam3.Visibility = Visibility.Visible;
+                //    break;
 
-                case 4:
-                    vdwMode2LiveCam4.Visibility = Visibility.Visible;
-                    break;
+                //case 4:
+                //    vdwMode2LiveCam4.Visibility = Visibility.Visible;
+                //    break;
 
-                case 5:
-                    vdwMode2LiveCam5.Visibility = Visibility.Visible;
-                    break;
+                //case 5:
+                //    vdwMode2LiveCam5.Visibility = Visibility.Visible;
+                //    break;
 
-                case 6:
-                    vdwMode2LiveCam6.Visibility = Visibility.Visible;
-                    break;
+                //case 6:
+                //    vdwMode2LiveCam6.Visibility = Visibility.Visible;
+                //    break;
 
-                case 7:
-                    vdwMode2LiveCam7.Visibility = Visibility.Visible;
-                    break;
+                //case 7:
+                //    vdwMode2LiveCam7.Visibility = Visibility.Visible;
+                //    break;
 
-                case 8:
-                    vdwMode2LiveCam8.Visibility = Visibility.Visible;
-                    break;
+                //case 8:
+                //    vdwMode2LiveCam8.Visibility = Visibility.Visible;
+                //    break;
 
                 case 100:
                     break;
@@ -3989,16 +3937,6 @@ namespace ANB_SSZ.Module_UI
         private void hideAllRTSPStream()
         {
             // mainVideoView.Visibility = Visibility.Hidden;
-
-            vdwMode2LiveCam0.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam1.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam2.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam3.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam4.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam5.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam6.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam7.Visibility = Visibility.Hidden;
-            vdwMode2LiveCam8.Visibility = Visibility.Hidden;
         }
 
         // 相機重新連接
@@ -4037,493 +3975,15 @@ namespace ANB_SSZ.Module_UI
         //public async Task<int> ConnectVideoCam()
         public void ConnectVideoCam()
         {
-            // 建立與加入九個 VideoCam 的 RTSP Video 物件
-            Core.Initialize();
-
-            string localIp = "192.168.2.200";
-
-            // 直接使用字符串數組來設定參數
-            string[] options = new[]
-            {
-                //"--no-audio",                           // 不需要音頻
-                //"--network-caching=100",                // 最小網路緩衝
-                //"--live-caching=50",                    // 最小直播緩衝
-                //"--clock-jitter=0",                     // 停用時鐘抖動補償
-                //"--clock-synchro=0",                    // 停用時鐘同步
-                //"--rtsp-tcp",                           // 使用 TCP (更穩定)
-                //// 20241121 先關閉硬體解碼
-                //// "--avcodec-hw=any",                     // 啟用任何可用的硬體加速
-                //// "--codec=nvdec,any",                    // 優先使用 NVDEC，如果不可用則使用其他解碼器
-                //"--sout-mux-caching=100",
-                //"--verbose=2",                          // 添加詳細日誌以便調試
-
-                // 2024/11/28 慢速版
-                "--no-audio",                           // 不需要音頻
-                "--live-caching=50",
-                "--network-caching=100",
-                "--sout-mux-caching=100",
-                "--clock-jitter=0",
-                "--clock-synchro=0",
-                "--fps=5",
-                "--rtsp-tcp", // 使用 TCP 傳輸
-                $"--miface-addr={localIp}", // 綁定特定網卡
-            };
-
-            /*
-            _libVLC = new LibVLC(options);
-            _mediaPlayers = new List<MediaPlayer>();
-
-            //  InitializeAllStreams
             try
             {
-                // 為每個 RTSP 串流建立一個 MediaPlayer
-                foreach (string url in majorMethod._rtspUrls)
-                {
-                    var mediaPlayer = new MediaPlayer(_libVLC);
-
-                    // 設定串流
-                    using (var media = new Media(_libVLC, new Uri(url)))
-                    {
-                        media.AddOption(":network-caching=50");
-                        media.AddOption(":clock-jitter=0");
-
-                        mediaPlayer.Play(media);
-                    }
-
-                    _mediaPlayers.Add(mediaPlayer);
-                }
-
-                // 切換到第一個串流
-                // SwitchToStream(0);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"初始化串流時發生錯誤: {ex.Message}");
-            }
-            */
-
-            try
-            {
-                // Cam1
-                LibVLC0 = new LibVLC(options);
-                mediaPlayerCam0 = new LibVLCSharp.Shared.MediaPlayer(LibVLC0);
-
-                // 顯示即時 FPS
-                mediaPlayerCam0.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam0).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam0.Content = $"Cam1 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam0 = now;
-                };
-
-                vdwMode2LiveCam0.MediaPlayer = mediaPlayerCam0;
-                mediaCam0 = new Media(LibVLC0, new Uri(majorMethod.camVideoUrl_1));
-
-                //// 添加媒體選項
-                //mediaCam0.AddOption(":network-caching=0");
-                //mediaCam0.AddOption(":clock-jitter=0");
-                //mediaCam0.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam0.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam0.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam0.Play(mediaCam0);
-
-                // Cam2
-                LibVLC1 = new LibVLC(options);
-                mediaPlayerCam1 = new LibVLCSharp.Shared.MediaPlayer(LibVLC1);
-
-                // 顯示即時 FPS
-                mediaPlayerCam1.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam1).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam1.Content = $"Cam2 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam1 = now;
-                };
-
-                vdwMode2LiveCam1.MediaPlayer = mediaPlayerCam1;
-                mediaCam1 = new Media(LibVLC1, new Uri(majorMethod.camVideoUrl_2));
-
-                //// 添加媒體選項
-                //mediaCam1.AddOption(":network-caching=0");
-                //mediaCam1.AddOption(":clock-jitter=0");
-                //mediaCam1.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam1.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam1.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam1.Play(mediaCam1);
-
-                // Cam3
-                LibVLC2 = new LibVLC(options);
-                mediaPlayerCam2 = new LibVLCSharp.Shared.MediaPlayer(LibVLC2);
-
-                // 顯示即時 FPS
-                mediaPlayerCam2.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam2).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam2.Content = $"Cam3 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam2 = now;
-                };
-
-                vdwMode2LiveCam2.MediaPlayer = mediaPlayerCam2;
-                mediaCam2 = new Media(LibVLC2, new Uri(majorMethod.camVideoUrl_3));
-
-                //// 添加媒體選項
-                //mediaCam2.AddOption(":network-caching=0");
-                //mediaCam2.AddOption(":clock-jitter=0");
-                //mediaCam2.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam2.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam2.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam2.Play(mediaCam2);
-
-                // Cam4
-                LibVLC3 = new LibVLC(options);
-                mediaPlayerCam3 = new LibVLCSharp.Shared.MediaPlayer(LibVLC3);
-
-                // 顯示即時 FPS
-                mediaPlayerCam3.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam3).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam3.Content = $"Cam4 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam3 = now;
-                };
-
-                vdwMode2LiveCam3.MediaPlayer = mediaPlayerCam3;
-                mediaCam3 = new Media(LibVLC3, new Uri(majorMethod.camVideoUrl_4));
-
-                //// 添加媒體選項
-                //mediaCam3.AddOption(":network-caching=0");
-                //mediaCam3.AddOption(":clock-jitter=0");
-                //mediaCam3.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam3.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam3.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam3.Play(mediaCam3);
-
-                // Cam5
-                LibVLC4 = new LibVLC(options);
-                mediaPlayerCam4 = new LibVLCSharp.Shared.MediaPlayer(LibVLC4);
-
-                // 顯示即時 FPS
-                mediaPlayerCam4.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam4).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam4.Content = $"Cam5 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam4 = now;
-                };
-
-                vdwMode2LiveCam4.MediaPlayer = mediaPlayerCam4;
-                mediaCam4 = new Media(LibVLC4, new Uri(majorMethod.camVideoUrl_5));
-
-                //// 添加媒體選項
-                //mediaCam4.AddOption(":network-caching=0");
-                //mediaCam4.AddOption(":clock-jitter=0");
-                //mediaCam4.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam4.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam4.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam4.Play(mediaCam4);
-
-                // Cam6
-                LibVLC5 = new LibVLC(options);
-                mediaPlayerCam5 = new LibVLCSharp.Shared.MediaPlayer(LibVLC5);
-
-                // 顯示即時 FPS
-                mediaPlayerCam5.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam5).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam5.Content = $"Cam6 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam5 = now;
-                };
-
-                vdwMode2LiveCam5.MediaPlayer = mediaPlayerCam5;
-                mediaCam5 = new Media(LibVLC5, new Uri(majorMethod.camVideoUrl_6));
-
-                //// 添加媒體選項
-                //mediaCam5.AddOption(":network-caching=0");
-                //mediaCam5.AddOption(":clock-jitter=0");
-                //mediaCam5.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam5.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam5.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam5.Play(mediaCam5);
-
-                // Cam7
-                LibVLC6 = new LibVLC(options);
-                mediaPlayerCam6 = new LibVLCSharp.Shared.MediaPlayer(LibVLC6);
-
-                // 顯示即時 FPS
-                mediaPlayerCam6.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam6).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam6.Content = $"Cam7 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam6 = now;
-                };
-
-                vdwMode2LiveCam6.MediaPlayer = mediaPlayerCam6;
-                mediaCam6 = new Media(LibVLC6, new Uri(majorMethod.camVideoUrl_7));
-
-                //// 添加媒體選項
-                //mediaCam6.AddOption(":network-caching=0");
-                //mediaCam6.AddOption(":clock-jitter=0");
-                //mediaCam6.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam6.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam6.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam6.Play(mediaCam6);
-
-                // Cam8
-                LibVLC7 = new LibVLC(options);
-                mediaPlayerCam7 = new LibVLCSharp.Shared.MediaPlayer(LibVLC7);
-
-                // 顯示即時 FPS
-                mediaPlayerCam7.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam7).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam7.Content = $"Cam8 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam7 = now;
-                };
-
-                vdwMode2LiveCam7.MediaPlayer = mediaPlayerCam7;
-                mediaCam7 = new Media(LibVLC7, new Uri(majorMethod.camVideoUrl_8));
-
-                //// 添加媒體選項
-                //mediaCam7.AddOption(":network-caching=0");
-                //mediaCam7.AddOption(":clock-jitter=0");
-                //mediaCam7.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam7.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam7.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam7.Play(mediaCam7);
-
-                // Cam9
-                LibVLC8 = new LibVLC();
-                mediaPlayerCam8 = new LibVLCSharp.Shared.MediaPlayer(LibVLC8);
-
-                mediaPlayerCam8.EncounteredError += MediaPlayer_EncounteredError;
-                mediaPlayerCam8.EndReached += MediaPlayer_EndReached;
-                mediaPlayerCam8.Stopped += MediaPlayer_Stopped;
-
-                // 顯示即時 FPS
-                mediaPlayerCam8.TimeChanged += (s, e) =>
-                {
-                    var now = DateTime.Now;
-                    double currentFPS = 1 / (now - LastFpsUpdate_Cam8).TotalSeconds;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        lblFSP_Cam8.Content = $"Cam9 FPS: {currentFPS:N3}";
-                    });
-
-                    LastFpsUpdate_Cam8 = now;
-                };
-
-                vdwMode2LiveCam8.MediaPlayer = mediaPlayerCam8;
-                mediaCam8 = new Media(LibVLC8, new Uri(majorMethod.camVideoUrl_9));
-
-                //// 添加媒體選項
-                //mediaCam8.AddOption(":network-caching=0");
-                //mediaCam8.AddOption(":clock-jitter=0");
-                //mediaCam8.AddOption(":clock-synchro=0");
-
-                //// 設定串流參數
-                //mediaCam8.AddOption(":sout-record-dst-prefix=stream");
-                //mediaCam8.AddOption(":sout=#transcode{vcodec=h264,fps=10}:standard{access=file,mux=ts}");
-
-                mediaPlayerCam8.Play(mediaCam8);
-
+                
             }
             catch (Exception ex)
             {
                 TextLog.WriteLog($"發生即時影像撥放錯誤!! {ex.Message}");
-
-                //return -1;
             }
 
-        }
-
-        // Player 的錯誤處理機制
-        private async void MediaPlayer_EncounteredError(object? sender, EventArgs e)
-        {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
-
-
-            if (sender != null)
-            {
-                var errorPlayer = sender as MediaPlayer;
-
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
-
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
-
-                //TextLog.WriteLog("[MediaPlayer_EncounteredError] 發生即時影像撥放錯誤，重新啟動!!");
-            }
-        }
-
-        private async void MediaPlayer_EndReached(object? sender, EventArgs e)
-        {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
-
-            if (sender != null)
-            {
-                var errorPlayer = sender as MediaPlayer;
-
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
-
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
-
-                //TextLog.WriteLog("[MediaPlayer_EndReached] 發生即時影像撥放錯誤，重新啟動!!");
-            }
-        }
-
-        private async void MediaPlayer_Stopped(object? sender, EventArgs e)
-        {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
-
-            if (sender != null)
-            {
-                var errorPlayer = sender as MediaPlayer;
-
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
-
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
-
-                //TextLog.WriteLog("[MediaPlayer_Stopped] 發生即時影像撥放錯誤，重新啟動!!");
-            }
-        }
-
-        private async Task TryReconnect(LibVLCSharp.Shared.MediaPlayer mediaPlayer)
-        {
-            int attemptCount = 0;
-
-            while (attemptCount < maxReconnectAttempts && !reconnectCts.Token.IsCancellationRequested)
-            {
-                try
-                {
-                    // OnReconnecting?.Invoke(this, EventArgs.Empty);
-                    attemptCount++;
-
-                    await Task.Delay(reconnectDelayMs, reconnectCts.Token);
-                    
-                    // 呼叫停止的 mediaPlayer 繼續撥放 
-                    mediaPlayer.Play();
-                    // await ConnectAndPlay();
-
-                    // OnReconnected?.Invoke(this, EventArgs.Empty);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    if (attemptCount >= maxReconnectAttempts)
-                    {
-                        //OnError?.Invoke(this, $"播放器 {PlayerIndex + 1} 重連失敗，已達最大重試次數: {ex.Message}");
-                        // Stop();
-                    }
-                    else
-                    {
-                        //OnError?.Invoke(this, $"播放器 {PlayerIndex + 1} 重連嘗試 {attemptCount} 失敗: {ex.Message}");
-                    }
-                }
-            }
-        }
-
-        private async Task ConnectAndPlay()
-        {
-            //if (_media != null)
-            //{
-            //    _media.Dispose();
-            //}
-
-            //var options = new[]
-            //{
-            //    ":network-caching=300",
-            //    ":rtsp-tcp",
-            //    ":rtsp-frame-buffer-size=1000000"
-            //};
-
-            //_media = new Media(_libVLC, new Uri(_rtspUrl), options);
-            //_mediaPlayer.Media = _media;
-            //_mediaPlayer.Play();
-
-            //await Task.Delay(1000);
-
-            //if (!_mediaPlayer.IsPlaying)
-            //{
-            //    throw new Exception("無法開始播放串流");
-            //}
         }
 
         private void grdMain_MouseDown(object sender, MouseButtonEventArgs e)

@@ -1,7 +1,6 @@
 ﻿using ANB_SSZ.Module_UI;
 using GAIA.MainObject;
 using GAIA.Module_DataReceiver;
-using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
