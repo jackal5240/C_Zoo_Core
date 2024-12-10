@@ -31,32 +31,29 @@ namespace GAIA.Module_UI
             // string DTJsonString = "";
 
             // 主要工作內容
-            while (true)
+            while (doWork)
             {
-                if (doWork == true) {
+                try
+                {
+                    /* 這段不用做事，將 Json 變成物件的部分，由 guideWindow 的 repaint 方法來做
+                    // 取得 DT 的字串
+                    DTJsonString = majorMethod.GetDTResultData();
 
-                    try
-                    {
-                        /* 這段不用做事，將 Json 變成物件的部分，由 guideWindow 的 repaint 方法來做
-                        // 取得 DT 的字串
-                        DTJsonString = majorMethod.GetDTResultData();
+                    // 序列化到 guideWindow 的 bearObject 中
+                    guideWindow.bearObject = JsonConvert.DeserializeObject<BearObject>(DTJsonString);
+                    */
 
-                        // 序列化到 guideWindow 的 bearObject 中
-                        guideWindow.bearObject = JsonConvert.DeserializeObject<BearObject>(DTJsonString);
-                        */
+                    // 回報 Progress，觸發 ProgressChanged
+                    bgWorker?.ReportProgress(0);
 
-                        // 回報 Progress，觸發 ProgressChanged
-                        bgWorker?.ReportProgress(0);
-
-                        // 顯示回應資料
-                        // Debug.WriteLine($"時間: {DateTime.Now}, 回應: {DTJsonString}");
-                    }
-                    catch (HttpRequestException exception)
-                    {
-                        TextLog.WriteLog($"錯誤: {exception.Message}");
-                    }
+                    // 顯示回應資料
+                    // Debug.WriteLine($"時間: {DateTime.Now}, 回應: {DTJsonString}");
                 }
-
+                catch (HttpRequestException exception)
+                {
+                    TextLog.WriteLog($"錯誤: {exception.Message}");
+                }
+                
                 // 暫停 0.1 秒後再呼叫
                 Thread.Sleep(100);
             }

@@ -209,10 +209,6 @@ namespace GAIA.Module_DataReceiver
                     {
                         Data detectionData = cameraInfo.Data[0];
 
-                        // 放入 Conf 的部分
-                        // 由於 200 的模式有錯誤，Conf 在空值時，回傳 Array，但有值時，回傳 float，造成困擾
-                        // 目前先採用這樣的處理方式
-                        // TODO 若 200 將資料格式改回來之後，這兒再做修改
                         if (detectionData.Conf.GetType().Name == "JArray")
                         {
                             data_array_item_bear.Add(-9999.0);

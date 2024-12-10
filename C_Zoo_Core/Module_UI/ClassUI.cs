@@ -102,7 +102,7 @@ namespace GAIA.Module_UI
             if (screens.Length >= 2)
             {
                 // 取得第二個螢幕的資訊
-                var secondScreen = screens[0];
+                var secondScreen = screens[1];
 
                 // 第二個螢幕的邊界值
                 System.Drawing.Rectangle secondBounds = secondScreen.Bounds;
