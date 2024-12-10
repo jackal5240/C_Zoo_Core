@@ -270,20 +270,6 @@ namespace GAIA.Module_DataTransformer
                             dataCollectionObject.DataArray[1] = majorMethod.lastValidData.DataArray[1];
                         }
                     }
-                    // 0.42276741035760124, 0.8981663920246509 => 136/417 = 0.3261390887290168, 175/416 = 0.4206730769230769
-                    //mapRotateY = Convert.ToDouble((-0.981627183447664 * Convert.ToDouble(dataCollectionObject.DataArray[0]) * 348) + ((-0.1908089953765448) * Convert.ToDouble(dataCollectionObject.DataArray[1]) * 348) + 407.01308152368847) / 407;
-                    /*
-                    double angle = 101;
-                    double radians = angle * Math.PI / 180;
-                    mapRotateX = (
-                        ((Convert.ToDouble(dataCollectionObject.DataArray[0]) * Math.Round(Math.Cos(radians), 5)) 
-                        - (Convert.ToDouble(dataCollectionObject.DataArray[1]) * Math.Round(Math.Sin(radians), 5))
-                        + 1.17245) / 2.3449);
-                    mapRotateY = (
-                        ((Convert.ToDouble(dataCollectionObject.DataArray[0]) * Math.Round(Math.Sin(radians), 5)) 
-                        + (Convert.ToDouble(dataCollectionObject.DataArray[1]) * Math.Round(Math.Cos(radians), 5)
-                        + 1.172245) / 2.34449));
-                    */
                     Transform(Convert.ToDouble(dataCollectionObject.DataArray[0]), Convert.ToDouble(dataCollectionObject.DataArray[1]));
                 }
             }
@@ -726,27 +712,6 @@ namespace GAIA.Module_DataTransformer
             //dataCollectionObject.AreaEgg[6].PositionXY[0] = Convert.ToInt32(-2.2 * machine.Degree) + 240;
             // 花絮 16
             dataCollectionObject.AreaEgg[7].PositionXY[0] = Convert.ToInt32(-3 * machine.Degree) + 910;
-
-            /*
-            // 更新 8 個絕對地標在透顯上不同高度與角度時的座標
-            // 近的，絕對地標 91 ，參考花絮 1 ，角度 -30
-            dataCollectionObject.AreaEgg[8].PositionXY[0] = Convert.ToInt32(-2.05 * machine.Degree) + 568;            
-            // 近的，絕對地標 92 ，參考花絮 16 ，角度 -30
-            dataCollectionObject.AreaEgg[9].PositionXY[0] = Convert.ToInt32(-2.2 * machine.Degree) + 728;
-            // 近的，絕對地標 93 ，參考花絮 2 ，角度 25
-            dataCollectionObject.AreaEgg[10].PositionXY[0] = Convert.ToInt32(-2.1 * machine.Degree) + 1260;
-            // 近的，絕對地標 94 ，參考花絮 14 ，角度 80
-            dataCollectionObject.AreaEgg[11].PositionXY[0] = Convert.ToInt32(-5 * machine.Degree) + 3180;
-
-            // 遠的，絕對地標 96 ，參考花絮 1 ，角度 -30
-            dataCollectionObject.AreaEgg[12].PositionXY[0] = Convert.ToInt32(-2.2 * machine.Degree) + 568;
-            // 遠的，絕對地標 97 ，參考花絮 16 ，角度 -30
-            dataCollectionObject.AreaEgg[13].PositionXY[0] = Convert.ToInt32(-2.35 * machine.Degree) + 728;
-            // 遠的，絕對地標 98 ，參考花絮 2 ，角度 25
-            dataCollectionObject.AreaEgg[14].PositionXY[0] = Convert.ToInt32(-2.25 * machine.Degree) + 1260;
-            // 遠的，絕對地標 99 ，參考花絮 14 ，角度 80
-            dataCollectionObject.AreaEgg[15].PositionXY[0] = Convert.ToInt32(-5.15 * machine.Degree) + 3180;
-            */
         }
 
         public static void Confidence(dynamic dataArray)
@@ -922,11 +887,6 @@ namespace GAIA.Module_DataTransformer
                     TextLog.WriteLog("majorMethod.arTime > 10, DateTime.Now = " + DateTime.Now.ToString() + ", majorMethod.ModeLastChangeTime = " + majorMethod.ModeLastChangeTime.ToString()
                         + ", (DateTime.Now - majorMethod.ModeLastChangeTime) = " + (DateTime.Now - majorMethod.ModeLastChangeTime).ToString());
                 }
-                //if ((DateTime.Now - majorMethod.ModeLastChangeTime) <= MajorMethod.ModeInterval)
-                //{
-                //     TextLog.WriteLog("majorMethod.arTime > 10, DateTime.Now = " + DateTime.Now.ToString() + ", majorMethod.ModeLastChangeTime = " + majorMethod.ModeLastChangeTime.ToString() + "(DateTime.Now - majorMethod.ModeLastChangeTime) = " + (DateTime.Now - majorMethod.ModeLastChangeTime).ToString());
-                //    ScreenMode = "-1";
-                //}
             }
         }
 
