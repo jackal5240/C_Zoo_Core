@@ -52,7 +52,7 @@ namespace C_Zoo_Core.Models
         public string Class { get; set; }
 
         [JsonProperty("conf")]
-        public List<object> Conf { get; set; }
+        public object Conf { get; set; }
 
         [JsonProperty("coordinates")]
         public List<object> Coordinates { get; set; }
