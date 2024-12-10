@@ -41,15 +41,15 @@ namespace GAIA.Module_DataReceiver
             CreateWorker();
 
             // 設定 Worker 的各項屬性
-            ReceiveMonitorWorkerClass.mainWin = mainWin;
-            ReceiveMonitorWorkerClass.bgWorker = ReceiveMonitorWorker;
-            ReceiveMonitorWorkerClass.majorMethod = majorMethod;
-            ReceiveMonitorWorkerClass.classDR = this;
+            //ReceiveMonitorWorkerClass.mainWin = mainWin;
+            //ReceiveMonitorWorkerClass.bgWorker = ReceiveMonitorWorker;
+            //ReceiveMonitorWorkerClass.majorMethod = majorMethod;
+            //ReceiveMonitorWorkerClass.classDR = this;
 
-            ReceiveCameraWorkerClass.mainWin = mainWin;
-            ReceiveCameraWorkerClass.bgWorker = ReceiveCameraDataWorker;
-            ReceiveCameraWorkerClass.majorMethod = majorMethod;
-            ReceiveCameraWorkerClass.classDR = this;
+            //ReceiveCameraWorkerClass.mainWin = mainWin;
+            //ReceiveCameraWorkerClass.bgWorker = ReceiveCameraDataWorker;
+            //ReceiveCameraWorkerClass.majorMethod = majorMethod;
+            //ReceiveCameraWorkerClass.classDR = this;
 
             SendDataWorkerClass.mainWin = mainWin;
             SendDataWorkerClass.bgWorker = SendDataWorker;
@@ -78,37 +78,6 @@ namespace GAIA.Module_DataReceiver
             SendDataWorker.DoWork += SendDataWorkerClass.DoWorkHandler;
             SendDataWorker.ProgressChanged += SendDataWorkerClass.ProgressChangedHandler;
             SendDataWorker.RunWorkerCompleted += SendDataWorkerClass.RunWorkerCompletedHandler;
-
-            // 取得 Camera 的資料
-            ReceiveCameraDataWorker = new BackgroundWorker();
-            ReceiveCameraDataWorker.WorkerSupportsCancellation = true;
-            ReceiveCameraDataWorker.WorkerReportsProgress = true;
-
-            ReceiveCameraDataWorker.DoWork += ReceiveCameraWorkerClass.DoWorkHandler;
-            ReceiveCameraDataWorker.ProgressChanged += ReceiveCameraWorkerClass.ProgressChangedHandler;
-            ReceiveCameraDataWorker.RunWorkerCompleted += ReceiveCameraWorkerClass.RunWorkerCompletedHandler;
-
-            // 取得 透顯裝置物件 的資料
-            ReceiveMonitorWorker = new BackgroundWorker();
-            ReceiveMonitorWorker.WorkerSupportsCancellation = true;
-            ReceiveMonitorWorker.WorkerReportsProgress = true;
-
-            ReceiveMonitorWorker.DoWork += ReceiveMonitorWorkerClass.DoWorkHandler;
-            ReceiveMonitorWorker.ProgressChanged += ReceiveMonitorWorkerClass.ProgressChangedHandler;
-            ReceiveMonitorWorker.RunWorkerCompleted += ReceiveMonitorWorkerClass.RunWorkerCompletedHandler;
-
-        }
-
-        // 啟動 ReceiveCameraDataWorker
-        public void StartReceiveCameraDataWorker()
-        {
-            ReceiveCameraWorkerClass.doWork = true;
-
-            if (ReceiveCameraDataWorker?.IsBusy == false) {
-                ReceiveCameraDataWorker?.RunWorkerAsync();
-
-                mainWin?.WriteCameraLog("ReceiveCameraDataWorker RunWorkerAsync");
-            }
         }
 
         // 停止 ReceiveCameraDataWorker
@@ -116,20 +85,6 @@ namespace GAIA.Module_DataReceiver
         {
             ReceiveCameraWorkerClass.doWork = false;
         }
-
-        // 啟動 ReceiveMonitorWorker
-        public void StartReceiveMonitorWorker()
-        {
-            ReceiveMonitorWorkerClass.doWork = true;
-
-            if (ReceiveMonitorWorker?.IsBusy == false)
-            {
-                ReceiveMonitorWorker?.RunWorkerAsync();
-
-                mainWin?.WriteMachineLog("ReceiveMonitorWorker RunWorkerAsync");
-            }
-        }
-
         // 停止 ReceiveMonitorWorker
         public void StopReceiveMonitorWorker()
         {

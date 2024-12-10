@@ -1,4 +1,5 @@
-﻿using GAIA.Models;
+﻿using C_Zoo_Core.Models;
+using GAIA.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,6 +89,7 @@ namespace GAIA.MainObject
         // 此為系統之共用資料
         public string DRResultData = "";
         public string DTResultData = "";
+        SourceObject sourceObject = new SourceObject();
 
         // 攝影機相關資料
         public static readonly string camUsername = "admin";
@@ -264,6 +266,13 @@ namespace GAIA.MainObject
             return DTResultData;
         }
 
-
+        public void SetSourceObject(SourceObject sourceObject)
+        {
+            this.sourceObject = sourceObject;
+        }
+        public SourceObject GetSourceObject()
+        {
+            return sourceObject;
+        }
     }
 }

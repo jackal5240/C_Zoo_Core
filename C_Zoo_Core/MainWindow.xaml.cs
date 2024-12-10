@@ -76,28 +76,11 @@ namespace GAIA
         {
             DTObject.StopZooCoreWorker();
         }
-        // 啟動與 Camera 模組的串接
-        private void btnStartImageReco_Click(object sender, RoutedEventArgs e)
-        {
-            DRObject.StartReceiveCameraDataWorker();
-        }
 
         // 停止與 Camera 模組的串接
         private void btnStopImageReco_Click(object sender, RoutedEventArgs e)
         {
             DRObject.StopReceiveCameraDataWorker();
-        }
-
-        // 啟動與 顯示裝置(Machine) 模組的串接
-        private void btnStartMachine_Click(object sender, RoutedEventArgs e)
-        {
-            DRObject.StartReceiveMonitorWorker();
-        }
-
-        // 停止與 顯示裝置(Machine) 模組的串接
-        private void btnStopMachine_Click(object sender, RoutedEventArgs e)
-        {
-            DRObject.StopReceiveMonitorWorker();
         }
 
         // 讓螢幕觸控模組生效
@@ -125,43 +108,6 @@ namespace GAIA
         private void btnHideScreen_Click(object sender, RoutedEventArgs e)
         {
             UIObject.HideGuideWindow();
-        }
-
-        // 紀錄 Camera 的 Log
-        public void WriteCameraLog(string message)
-        {
-            // 取得當下的時間
-            string nowTimeString = DateTime.Now.ToString("yyyy/MM/dd tt hh:mm:ss.fff");
-
-            // 如果超過 1000 行，就清除 ListBox
-            if (this.lsbCamera.Items.Count > 1000)
-            {
-                lsbCamera.Items.Clear();
-            }
-
-            // 將 Log 加到 ListBox 中
-            this.lsbCamera.Items.Add("[" + nowTimeString + "] " + message);
-
-            // 捲到最後一行
-            this.lsbCamera.ScrollIntoView(this.lsbCamera.Items[this.lsbCamera.Items.Count - 1]);
-        }
-
-        public void WriteMachineLog(string message)
-        {
-            // 取得當下的時間
-            string nowTimeString = DateTime.Now.ToString("yyyy/MM/dd tt hh:mm:ss.fff");
-
-            // 如果超過 1000 行，就清除 ListBox
-            if (this.lsbMachine.Items.Count > 1000)
-            {
-                lsbMachine.Items.Clear();
-            }
-
-            // 將 Log 加到 ListBox 中
-            this.lsbMachine.Items.Add("[" + nowTimeString + "] " + message);
-
-            // 捲到最後一行
-            this.lsbMachine.ScrollIntoView(this.lsbMachine.Items[this.lsbMachine.Items.Count - 1]);
         }
 
         // 記錄觸控的時間與 X, Y 值
@@ -392,35 +338,6 @@ namespace GAIA
         private void btnStopDTDataReceive_Click(object sender, RoutedEventArgs e)
         {
             UIObject.StopReceiveDTDataWorker();
-        }
-
-        private void btnSetAdjustData_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                majorMethod.adjustDegree = double.Parse(txbAdjustDrgree.Text);
-                majorMethod.adjustHeight = double.Parse(txbAdjustHeight.Text);
-            }
-            catch {
-                txbAdjustDrgree.Text = majorMethod.adjustDegree.ToString();
-                txbAdjustHeight.Text = majorMethod.adjustHeight.ToString();
-            }
-        }
-
-        private void btnSetAdjustDegreeFormat_Click(object sender, RoutedEventArgs e)
-        {
-            /*
-            try
-            {
-                majorMethod.adjustDegreeMin = double.Parse(txbAdjustDegreeMin.Text);
-                majorMethod.adjustDegreeMax = double.Parse(txbAdjustDegreeMax.Text);
-            }
-            catch
-            {
-                txbAdjustDrgree.Text = majorMethod.adjustDegree.ToString();
-                txbAdjustHeight.Text = majorMethod.adjustHeight.ToString();
-            }
-            */
         }
 
         private void btnCam0_Click(object sender, RoutedEventArgs e)
