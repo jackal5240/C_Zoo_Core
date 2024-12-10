@@ -1,0 +1,446 @@
+﻿<Window x:Class="ANB_SSZ.Module_UI.GuideWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ANB_SSZ.Module_UI"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        mc:Ignorable="d"
+        Title="GuideWindow" Background="Black" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None" ResizeMode="NoResize">
+    <Grid x:Name="grdMain" Height="540" Width="960" MouseDown="grdMain_MouseDown">
+
+        <!-- Mode 1 -->
+        <MediaElement x:Name="mdeMoviePlayer" MediaEnded="mdeMoviePlayer_MediaEnded" Height="540" Width="960" Visibility="Hidden"/>
+        <StackPanel x:Name="spnlMode1" Height="540" Width="960" Visibility="Hidden"/>
+
+        <!-- Mode 1.5 站立 -->
+        <StackPanel x:Name="spnlMode15A20" Height="540" Width="960" Visibility="Hidden"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A22_A_AR" Height="235" Width="300" />
+        </Canvas>
+
+        <!-- Mode 2.0 站立Q -->
+        <StackPanel x:Name="spnlMode2A21" Height="540" Width="960" Visibility="Visible" />
+        <Canvas>
+            <StackPanel x:Name="spnlMode2A21_Q1" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A21_Q1_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A21_Q2" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A21_Q2_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A21_Q3" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A21_Q3_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A21_Q4" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A21_Q4_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A21_Q5" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A21_Q5_MouseLeftButtonDown"/>
+        </Canvas>
+
+        <!-- Mode 3.0 站立A -->
+        <StackPanel x:Name="spnlMode3A22" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A22_A" Height="250" Width="450" Margin="50, 50, 0, 0"/>
+        </Canvas>        
+
+        <!-- Mode 1.5 趴臥 -->
+        <StackPanel x:Name="spnlMode15A30" Height="540" Width="960" Visibility="Hidden"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A32_A_AR" Height="235" Width="300" />
+        </Canvas>
+
+        <!-- Mode 2.0 趴臥Q -->
+        <StackPanel x:Name="spnlMode2A31" Height="540" Width="960" Visibility="Visible" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Canvas>
+            <StackPanel x:Name="spnlMode2A31_Q1" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A31_Q1_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A31_Q2" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A31_Q2_MouseLeftButtonDown"/>
+            <StackPanel x:Name="spnlMode2A31_Q3" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A31_Q3_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A31_Q4" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A31_Q4_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A31_Q5" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A31_Q5_MouseLeftButtonDown" />
+        </Canvas>
+
+        <!-- Mode 3.0 趴臥A -->
+        <StackPanel x:Name="spnlMode3A32" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A32_A" Height="250" Width="450" Margin="250, 50, 0, 0"/>
+        </Canvas>
+
+        <!-- Mode 1.5 四足 -->
+        <StackPanel x:Name="spnlMode15A40" Height="540" Width="960" Visibility="Hidden"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A42_A_AR" Height="235" Width="300" />
+        </Canvas>
+
+        <!-- Mode 2.0 四足Q -->
+        <StackPanel x:Name="spnlMode2A41" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Canvas>
+            <StackPanel x:Name="spnlMode2A41_Q1" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A41_Q1_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A41_Q2" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A41_Q2_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A41_Q3" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A41_Q3_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A41_Q4" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A41_Q4_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A41_Q5" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A41_Q5_MouseLeftButtonDown" />
+        </Canvas>
+
+        <!-- Mode 3.0 四足A -->
+        <StackPanel x:Name="spnlMode3A42" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A42_A" Height="250" Width="450" Margin="500, 50, 0, 0"/>
+        </Canvas>
+
+        <!-- Mode 1.5 坐 -->
+        <StackPanel x:Name="spnlMode15A50" Height="540" Width="960" Visibility="Hidden"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A52_A_AR" Height="235" Width="300" />
+        </Canvas>
+
+        <!-- Mode 2.0 坐Q -->
+        <StackPanel x:Name="spnlMode2A51" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Canvas>
+            <StackPanel x:Name="spnlMode2A51_Q1" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A51_Q1_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A51_Q2" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A51_Q2_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A51_Q3" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A51_Q3_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A51_Q4" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A51_Q4_MouseLeftButtonDown" />
+            <StackPanel x:Name="spnlMode2A51_Q5" Height="70" Width="350" MouseLeftButtonDown="spnlMode2A51_Q5_MouseLeftButtonDown" />
+        </Canvas>
+
+        <!-- Mode 3.0 坐A -->
+        <StackPanel x:Name="spnlMode3A52" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMode3A52_A" Height="250" Width="450" Margin="50, 50, 0, 0"/>
+        </Canvas>
+
+        <!-- Mode 1.5 黑熊花絮 -->
+        <StackPanel x:Name="spnlMode15B10" Height="540" Width="960" Visibility="Hidden">
+            <Canvas>
+                <StackPanel x:Name="spnlB10Icon0" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon0_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon1" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon1_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon2" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon2_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon3" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon3_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon4" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon4_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon5" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon5_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon6" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon6_MouseLeftButtonDown" />
+                <StackPanel x:Name="spnlB10Icon7" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" MouseLeftButtonDown="spnlB10Icon7_MouseLeftButtonDown" />
+
+                <StackPanel x:Name="spnlB10Icon8" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" />
+                <StackPanel x:Name="spnlB10Icon9" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" />
+                <StackPanel x:Name="spnlB10Icon10" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" />
+                <StackPanel x:Name="spnlB10Icon11" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="85" Height="90" />
+
+                <StackPanel x:Name="spnlB10Icon12" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
+                <StackPanel x:Name="spnlB10Icon13" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
+                <StackPanel x:Name="spnlB10Icon14" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
+                <StackPanel x:Name="spnlB10Icon15" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
+            </Canvas>
+        </StackPanel>
+
+        <!-- Mode 2 精彩花絮 ZOO_B_20_1 -->
+        <MediaElement x:Name="mdeMoviePlayer_B20" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B20_MediaEnded"/>
+        <StackPanel x:Name="spnlMode2B20" Height="540" Width="960" Visibility="Hidden"/>
+
+        <!-- Mode 2 動物園科普 ZOO_B_30_1 -->
+        <MediaElement x:Name="mdeMoviePlayer_B30" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B30_MediaEnded"/>
+        <StackPanel x:Name="spnlMode2B30" Height="540" Width="960" Visibility="Hidden"/>
+
+        <!-- Mode 2 Map -->
+        <StackPanel x:Name="spnlMode2Map" Height="540" Width="960" Visibility="Hidden"/>
+        <Canvas>
+            <StackPanel x:Name="spnlMapIcon" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="70" Height="90" Background="Azure" Visibility="Hidden"/>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_01 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_01" Height="150" Width="390" Canvas.Left="48" Canvas.Top="17" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_01.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_02 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_02_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_02" Height="150" Width="390" Canvas.Left="546" Canvas.Top="224" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_02_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_02.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_03 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_03_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_03" Height="150" Width="390" Canvas.Left="546" Canvas.Top="224" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_03_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_03.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_04 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_04_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_04" Height="150" Width="390" Canvas.Left="546" Canvas.Top="224" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_04_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_04.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_05 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_05_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_05" Height="150" Width="390" Canvas.Left="57" Canvas.Top="150" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_05_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_05.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_06 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_06_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_06" Height="150" Width="390" Canvas.Left="57" Canvas.Top="150" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_06_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_06.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_07 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_07_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_07" Height="150" Width="390" Canvas.Left="57" Canvas.Top="150" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_07_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_06.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_09 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_09_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_09" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_09_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_09.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_10 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_10_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_10" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_10_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_11 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_11_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_11" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_11_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_11.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- 盲區部份 ModeSP_12 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_12_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_A_10.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+            <StackPanel x:Name="spnlModeSP_12" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_12_MouseLeftButtonDown">
+                <!--
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/Image/ZOO_B_12.png"/>
+                </StackPanel.Background>
+                -->
+            </StackPanel>
+        </Canvas>
+
+        <!-- Mode 2 Live -->
+        <Canvas x:Name="cnsLive">
+            <vlc:VideoView x:Name="vdwMode2LiveCam0" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam1" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam2" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam3" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam4" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam5" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam6" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam7" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam8" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+
+            <!-- 
+            <vlc:VideoView x:Name="mainVideoView" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            -->
+            
+            <StackPanel x:Name="spnlLiveBtn0" VerticalAlignment="Center" Canvas.Left="148" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn1" VerticalAlignment="Center" Canvas.Left="223" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn2" VerticalAlignment="Center" Canvas.Left="298" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn3" VerticalAlignment="Center" Canvas.Left="373" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn4" VerticalAlignment="Center" Canvas.Left="448" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn5" VerticalAlignment="Center" Canvas.Left="523" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn6" VerticalAlignment="Center" Canvas.Left="598" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn7" VerticalAlignment="Center" Canvas.Left="673" Canvas.Top="440" Height="75" Width="65" />
+            <StackPanel x:Name="spnlLiveBtn8" VerticalAlignment="Center" Canvas.Left="748" Canvas.Top="440" Height="75" Width="65" />
+        </Canvas>
+        <StackPanel x:Name="spnlMode2Live" Height="540" Width="960" Panel.ZIndex="10" />
+
+        <!-- Mode 2 ShowAR for Debug -->
+        <StackPanel x:Name="spnlShowAR" Height="540" Width="960" Visibility="Hidden">
+            <Canvas x:Name="cnsShowAR">
+                <Label x:Name="lblMapPosition" Canvas.Left="10" Canvas.Top="70" Content="lblMapPosition" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblScreen_left_top" Canvas.Left="10" Canvas.Top="85" Content="lblScreen_left_top" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblBear_x_y" Canvas.Left="10" Canvas.Top="100" Content="lblBear_x_y" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblScreenDegree" Canvas.Left="10" Canvas.Top="115" Content="lblScreenDegree" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblScreenHeight" Canvas.Left="10" Canvas.Top="130" Content="lblScreenHeight" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblNowTime_red" Canvas.Left="10" Canvas.Top="145" Content="lblNowTime_red" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblScreenMode" Canvas.Left="10" Canvas.Top="155" Content="lblScreenMode" Foreground="Red" FontSize="12" />
+
+                <Label x:Name="lblFSP_Cam0" Canvas.Left="10" Canvas.Top="170" Content="lblFSP_Cam0" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam1" Canvas.Left="10" Canvas.Top="185" Content="lblFSP_Cam1" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam2" Canvas.Left="10" Canvas.Top="200" Content="lblFSP_Cam2" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam3" Canvas.Left="10" Canvas.Top="215" Content="lblFSP_Cam3" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam4" Canvas.Left="10" Canvas.Top="230" Content="lblFSP_Cam4" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam5" Canvas.Left="10" Canvas.Top="245" Content="lblFSP_Cam5" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam6" Canvas.Left="10" Canvas.Top="260" Content="lblFSP_Cam6" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam7" Canvas.Left="10" Canvas.Top="275" Content="lblFSP_Cam7" Foreground="Red" FontSize="12" />
+                <Label x:Name="lblFSP_Cam8" Canvas.Left="10" Canvas.Top="290" Content="lblFSP_Cam8" Foreground="Red" FontSize="12" />
+
+
+                <Border x:Name="brdBear" BorderBrush="Red" BorderThickness="5" Margin="100, 100" Height="300" Width="100"/>
+
+                <Label x:Name="lblMapRatio" Canvas.Left="750" Canvas.Top="10" Content="lblMapRatio" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblSelectedData" Canvas.Left="750" Canvas.Top="25" Content="lblSelectedData" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblSelectedDataTime" Canvas.Left="750" Canvas.Top="35" Content="lblSelectedData" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblScreenDegree_Yellow" Canvas.Left="750" Canvas.Top="50" Content="lblScreenDegree" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblScreenHeight_Yellow" Canvas.Left="750" Canvas.Top="63" Content="lblScreenHeight" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam1Conf" Canvas.Left="750" Canvas.Top="75" Content="lblCam1Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam1Time" Canvas.Left="750" Canvas.Top="85" Content="lblCam1Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam2Conf" Canvas.Left="750" Canvas.Top="100" Content="lblCam2Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam2Time" Canvas.Left="750" Canvas.Top="110" Content="lblCam2Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam3Conf" Canvas.Left="750" Canvas.Top="125" Content="lblCam3Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam3Time" Canvas.Left="750" Canvas.Top="135" Content="lblCam3Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam4Conf" Canvas.Left="750" Canvas.Top="150" Content="lblCam4Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam4Time" Canvas.Left="750" Canvas.Top="160" Content="lblCam4Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam5Conf" Canvas.Left="750" Canvas.Top="175" Content="lblCam5Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam5Time" Canvas.Left="750" Canvas.Top="185" Content="lblCam5Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam6Conf" Canvas.Left="750" Canvas.Top="200" Content="lblCam6Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam6Time" Canvas.Left="750" Canvas.Top="210" Content="lblCam6Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam7Conf" Canvas.Left="750" Canvas.Top="225" Content="lblCam7Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam7Time" Canvas.Left="750" Canvas.Top="235" Content="lblCam7Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam8Conf" Canvas.Left="750" Canvas.Top="250" Content="lblCam8Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam8Time" Canvas.Left="750" Canvas.Top="260" Content="lblCam8Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblCam9Conf" Canvas.Left="750" Canvas.Top="275" Content="lblCam9Conf" Foreground="Yellow" FontSize="12" />
+                <Label x:Name="lblCam9Time" Canvas.Left="750" Canvas.Top="285" Content="lblCam9Conf" Foreground="Yellow" FontSize="12" />
+
+                <Label x:Name="lblNowTime" Canvas.Left="750" Canvas.Top="300" Content="lblNowTime" Foreground="Yellow" FontSize="12" />
+
+                <!--
+                <Label x:Name="lblEgg_1" Canvas.Left="200" Canvas.Top="10" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_2" Canvas.Left="200" Canvas.Top="40" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_3" Canvas.Left="200" Canvas.Top="70" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_4" Canvas.Left="200" Canvas.Top="100" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_5" Canvas.Left="200" Canvas.Top="130" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_6" Canvas.Left="200" Canvas.Top="160" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_7" Canvas.Left="200" Canvas.Top="190" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                <Label x:Name="lblEgg_8" Canvas.Left="200" Canvas.Top="220" Content="" MaxWidth="940" Foreground="Red" FontSize="18" />
+                -->
+                <Label x:Name="lblEgg_9" Canvas.Left="200" Canvas.Top="250" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_10" Canvas.Left="200" Canvas.Top="270" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_11" Canvas.Left="200" Canvas.Top="300" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_12" Canvas.Left="200" Canvas.Top="330" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_13" Canvas.Left="200" Canvas.Top="250" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_14" Canvas.Left="200" Canvas.Top="270" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_15" Canvas.Left="200" Canvas.Top="300" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+                <Label x:Name="lblEgg_16" Canvas.Left="200" Canvas.Top="330" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
+
+            </Canvas>
+        </StackPanel> 
+
+
+    </Grid>
+</Window>

@@ -1,0 +1,251 @@
+﻿<Window x:Name="winMain" x:Class="GAIA.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GAIA" xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="822" Width="820" Closing="winMain_Closing">
+    <Grid x:Name="grdMain" Height="806" VerticalAlignment="Top">
+        <Label x:Name="lblTitle" Content="ANB SSZ 壽山動物園(GAIA v0.8)" HorizontalAlignment="Left" Margin="21,17,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <TabControl x:Name="tbcMain" HorizontalAlignment="Left" Height="715" Margin="21,62,0,0" VerticalAlignment="Top" Width="770" SelectedIndex="0">
+            <TabItem Header="多工資料接收模組">
+                <Grid Background="#FFE5E5E5">
+                    <TabControl HorizontalAlignment="Center" Height="668" VerticalAlignment="Center" Width="744">
+                        <TabItem Header="黑熊辨識">
+                            <Grid Background="#FFE5E5E5">
+                                <Button x:Name="btnStartImageReco" Content="啟動" HorizontalAlignment="Left" Height="33" Margin="9,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStartImageReco_Click"/>
+                                <Button x:Name="btnStopImageReco" Content="停止" HorizontalAlignment="Left" Height="33" Margin="105,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStopImageReco_Click"/>
+                                <ListBox x:Name="lsbCamera" HorizontalAlignment="Center" Height="582" Margin="0,49,0,0" VerticalAlignment="Top" Width="718" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="升降機構">
+                            <Grid Background="#FFE5E5E5">
+                                <Button x:Name="btnStartMachine" Content="啟動" HorizontalAlignment="Left" Height="33" Margin="9,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStartMachine_Click"/>
+                                <Button x:Name="btnStopMachine" Content="停止" HorizontalAlignment="Left" Height="33" Margin="105,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStopMachine_Click"/>
+                                <ListBox x:Name="lsbMachine" HorizontalAlignment="Center" Height="582" Margin="0,49,0,0" VerticalAlignment="Top" Width="718" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                                <Label Content="角度校正值" HorizontalAlignment="Left" Margin="313,15,0,0" VerticalAlignment="Top"/>
+                                <TextBox x:Name="txbAdjustDrgree" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="383,15,0,0" TextWrapping="Wrap" Text="0.0" VerticalAlignment="Top" Width="87"/>
+                                <Label Content="高度校正值" HorizontalAlignment="Left" Margin="475,15,0,0" VerticalAlignment="Top" RenderTransformOrigin="2.881,0.465"/>
+                                <TextBox x:Name="txbAdjustHeight" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="545,15,0,0" TextWrapping="Wrap" Text="0.0" VerticalAlignment="Top" Width="87"/>
+                                <Button x:Name="btnSetAdjustData" Content="設定校正值" HorizontalAlignment="Left" Height="33" Margin="637,10,0,0" VerticalAlignment="Top" Width="91" Click="btnSetAdjustData_Click"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="觸控螢幕">
+                            <Grid Background="#FFE5E5E5">
+                                <Button x:Name="btnStartMonitor" Content="有效" HorizontalAlignment="Left" Height="33" Margin="9,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStartMonitor_Click"/>
+                                <Button x:Name="btnStopMonitor" Content="無效" HorizontalAlignment="Left" Height="33" Margin="105,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStopMonitor_Click"/>
+                                <ListBox x:Name="lsbMonitor" HorizontalAlignment="Center" Height="582" Margin="0,49,0,0" VerticalAlignment="Top" Width="718" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="資料整合">
+                            <Grid Background="#FFE5E5E5">
+                                <ListBox x:Name="lsbReceiveData" HorizontalAlignment="Center" Height="621" VerticalAlignment="Center" Width="718" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                            </Grid>
+                        </TabItem>
+
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Header="虛實整合模組">
+                <Grid Background="#FFE5E5E5" Height="704">
+                    <Button x:Name="btnStartARComputing" Content="啟動" HorizontalAlignment="Left" Height="33" Margin="10,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStartARComputing_Click"/>
+                    <Button x:Name="btnStopARComputing" Content="停止" HorizontalAlignment="Left" Height="33" Margin="105,11,0,0" VerticalAlignment="Top" Width="91" Click="btnStopARComputing_Click"/>
+                    <Button x:Name="btnLogRecord" Content="紀錄" HorizontalAlignment="Left" Height="33" Margin="223,11,0,0" VerticalAlignment="Top" Width="91" Click="btnLogRecord_Click" RenderTransformOrigin="-0.429,0.44"/>
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="角度最小值" HorizontalAlignment="Left" Margin="323,16,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txbAdjustDegreeMin" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="393,16,0,0" TextWrapping="Wrap" Text="-30.0" VerticalAlignment="Top" Width="88"/>
+                    <Label Content="角度最大值" HorizontalAlignment="Left" Margin="485,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="2.881,0.465"/>
+                    <TextBox x:Name="txbAdjustDegreeMax" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="555,16,0,0" TextWrapping="Wrap" Text="110.0" VerticalAlignment="Top" Width="88"/>
+                    <Button x:Name="btnSetAdjustFormat" Content="序列化" HorizontalAlignment="Left" Height="33" Margin="647,11,0,0" VerticalAlignment="Top" Width="92" Click="btnSetAdjustDegreeFormat_Click"/>
+                    -->
+
+                    <Label Content="多工模組接收資訊" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="mutiDataReceiveLog" Height="109" Margin="10,72,10,0" VerticalAlignment="Top" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="機構上升高度(0.0~70.0cm) : " HorizontalAlignment="Left" Margin="10,179,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="machineHeight" HorizontalAlignment="Left" Margin="175,183,0,0" TextWrapping="Wrap" Text="0.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    -->
+                    <!-- <Label x:Name="machine_Height" Content="-70.0" HorizontalAlignment="Left" Margin="181,209,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.551,0.549"/> -->
+                    <!--
+                    <Label Content="目前旋轉角度(-30.0~110.0) : " HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="machineDegree" HorizontalAlignment="Left" Margin="175,208,0,0" TextWrapping="Wrap" Text="0.0" VerticalAlignment="Top" Width="65" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    -->
+                    <!-- <Label x:Name="machine_Degree" Content="-100.0" HorizontalAlignment="Left" Margin="174,234,0,0" VerticalAlignment="Top"/> -->
+
+                    <!-- 1 2 3 5 8 14 15 16 -->
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="花絮 1: " HorizontalAlignment="Left" Margin="270,179,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord1" HorizontalAlignment="Left" Margin="324,183,0,0" TextWrapping="Wrap" Text="160.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord1" HorizontalAlignment="Left" Margin="412,183,0,0" TextWrapping="Wrap" Text="100.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮 2: " HorizontalAlignment="Left" Margin="270,204,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord2" HorizontalAlignment="Left" Margin="324,208,0,0" TextWrapping="Wrap" Text="300.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord2" HorizontalAlignment="Left" Margin="412,208,0,0" TextWrapping="Wrap" Text="100.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮 3: " HorizontalAlignment="Left" Margin="270,229,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord3" HorizontalAlignment="Left" Margin="324,233,0,0" TextWrapping="Wrap" Text="400.0" VerticalAlignment="Top" Width="65" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord3" HorizontalAlignment="Left" Margin="412,233,0,0" TextWrapping="Wrap" Text="100.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮 5: " HorizontalAlignment="Left" Margin="270,254,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord5" HorizontalAlignment="Left" Margin="324,258,0,0" TextWrapping="Wrap" Text="660.0" VerticalAlignment="Top" Width="65" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord5" HorizontalAlignment="Left" Margin="412,258,0,0" TextWrapping="Wrap" Text="65.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮 8: " HorizontalAlignment="Left" Margin="515,179,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord8" HorizontalAlignment="Left" Margin="570,183,0,0" TextWrapping="Wrap" Text="365.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord8" HorizontalAlignment="Left" Margin="658,183,0,0" TextWrapping="Wrap" Text="65.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮14: " HorizontalAlignment="Left" Margin="515,204,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord14" HorizontalAlignment="Left" Margin="570,208,0,0" TextWrapping="Wrap" Text="560.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord14" HorizontalAlignment="Left" Margin="658,208,0,0" TextWrapping="Wrap" Text="75.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮15: " HorizontalAlignment="Left" Margin="515,229,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord15" HorizontalAlignment="Left" Margin="570,233,0,0" TextWrapping="Wrap" Text="60.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord15" HorizontalAlignment="Left" Margin="658,233,0,0" TextWrapping="Wrap" Text="80.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+
+                    <Label Content="花絮16: " HorizontalAlignment="Left" Margin="515,254,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="XCoord16" HorizontalAlignment="Left" Margin="570,258,0,0" TextWrapping="Wrap" Text="200.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    <TextBox x:Name="YCoord16" HorizontalAlignment="Left" Margin="658,258,0,0" TextWrapping="Wrap" Text="50.0" VerticalAlignment="Top" Width="64" PreviewTextInput="TextBox_PreviewTextInput" InputMethod.IsInputMethodEnabled="False" IsReadOnly="False"/>
+                    -->
+                    <!-- // 1107 AR主控台 Mark
+                    <TextBox x:Name="XCoord1" Width="50" Margin="0,0,5,0" PlaceholderText="X座標"/>
+                    <TextBox x:Name="YCoord1" Width="50" PlaceholderText="Y座標"/>
+                    
+                    <Label Content="黑熊全視野左上座標 : " HorizontalAlignment="Left" Margin="10,257,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="bearAllScreen" Content="(-1, -1)" HorizontalAlignment="Left" Margin="125,257,0,0" VerticalAlignment="Top"/>
+                    -->
+
+                    <!-- 程式碼會在這個 StackPanel 內畫紅色框，這裡會動態添加紅色框 -->
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="下圖為全透顯示意圖(因透顯螢幕僅為960*540，故此畫面有經過壓縮)" HorizontalAlignment="Left" Margin="175,288,0,0" VerticalAlignment="Top"/>
+                    <Label Content="| =========== 8 號相機視角範圍 =========== |" HorizontalAlignment="Left" Margin="30,477,0,0" VerticalAlignment="Top" Foreground="Red"/>
+                    <Label Content="| ========= 2 號相機視角範圍 ========= |" HorizontalAlignment="Left" Margin="450,477,0,0" VerticalAlignment="Top" Foreground="Red"/>
+                    <Label Content="| ============= 1 號相機視角範圍 ============= |" HorizontalAlignment="Left" Margin="120,305,0,0" VerticalAlignment="Top" Foreground="Red"/>
+                    <StackPanel x:Name="spnlAllView" Width="730" Height="160" Margin="18,290,17,187">
+                        <Canvas Name="screenBox" Background="LightGray">
+
+                        </Canvas>
+                    </StackPanel>
+                    -->
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="螢幕最左上角座標 : " HorizontalAlignment="Left" Margin="12,503,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="arScreenPosition" Content="(-1, -1)" HorizontalAlignment="Left" Margin="127,503,0,0" VerticalAlignment="Top"/>
+
+                    <Label Content="screen mode : " HorizontalAlignment="Left" Margin="194,503,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="arScreenMode" Content="NA" HorizontalAlignment="Left" Margin="286,504,0,0" VerticalAlignment="Top"/>
+
+                    <Label Content="熊之目前樣態 : " HorizontalAlignment="Left" Margin="360,502,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="arBearPose" Content="-1" HorizontalAlignment="Left" Margin="452,503,0,0" VerticalAlignment="Top"/>
+
+                    <Label Content="熊在所演算的空間座標中的BBOX值 : " HorizontalAlignment="Left" Margin="12,525,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="arScreenBBOX" Content="(-1, -1)" HorizontalAlignment="Left" Margin="214,525,0,0" VerticalAlignment="Top"/>
+
+                    <Label Content="熊的即時影像 : " HorizontalAlignment="Left" Margin="360,525,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="arCameraNumber" Content="-1" HorizontalAlignment="Left" Margin="452,526,0,0" VerticalAlignment="Top"/>
+                    -->
+
+                    <Label Content="AR運算結果" HorizontalAlignment="Left" Margin="10,550,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="arComputingLog" Height="109" Margin="10,569,283,0" VerticalAlignment="Top" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                    <!-- // 1107 AR主控台 Mark
+                    <Label Content="相機信賴率(原始Data，取到小數點第二位)" HorizontalAlignment="Left" Margin="505,568,0,0" VerticalAlignment="Top"/>
+                    <Label Content="8號 :" HorizontalAlignment="Left" Margin="507,598,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera8" Content="-1" HorizontalAlignment="Left" Margin="549,598,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.023,2.021"/>
+                    <Label Content="1號 : " HorizontalAlignment="Left" Margin="507,625,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera1" Content="-1" HorizontalAlignment="Left" Margin="550,625,0,0" VerticalAlignment="Top"/>
+                    <Label Content="2號 : " HorizontalAlignment="Left" Margin="507,650,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera2" Content="-1" HorizontalAlignment="Left" Margin="550,650,0,0" VerticalAlignment="Top"/>
+                    <Label Content="9號 :" HorizontalAlignment="Left" Margin="589,598,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera9" Content="-1" HorizontalAlignment="Left" Margin="631,598,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.023,2.021"/>
+                    <Label Content="3號 : " HorizontalAlignment="Left" Margin="589,625,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera3" Content="-1" HorizontalAlignment="Left" Margin="632,625,0,0" VerticalAlignment="Top"/>
+                    <Label Content="4號 : " HorizontalAlignment="Left" Margin="589,650,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera4" Content="-1" HorizontalAlignment="Left" Margin="632,650,0,0" VerticalAlignment="Top"/>
+                    <Label Content="5號 :" HorizontalAlignment="Left" Margin="674,598,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera5" Content="-1" HorizontalAlignment="Left" Margin="716,598,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.023,2.021"/>
+                    <Label Content="6號 : " HorizontalAlignment="Left" Margin="674,625,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera6" Content="-1" HorizontalAlignment="Left" Margin="717,625,0,0" VerticalAlignment="Top"/>
+                    <Label Content="7號 : " HorizontalAlignment="Left" Margin="674,650,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="camera7" Content="-1" HorizontalAlignment="Left" Margin="717,650,0,0" VerticalAlignment="Top" RenderTransformOrigin="6.979,0.476"/>
+                    -->
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="UI 畫面呈現模組">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="btnShowScreen" Content="顯示畫面" HorizontalAlignment="Left" Height="32" Margin="10,10,0,0" VerticalAlignment="Top" Width="66" Click="btnShowScreen_Click"/>
+                    <Button x:Name="btnHideScreen" Content="關閉畫面" HorizontalAlignment="Left" Height="32" Margin="10,47,0,0" VerticalAlignment="Top" Width="66" Click="btnHideScreen_Click"/>
+                    <Button x:Name="btnShowMode1" Content="顯示首頁(Mode1)" HorizontalAlignment="Left" Height="32" Margin="81,10,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode1_Click"/>
+                    <Button x:Name="btnShowModeMap" Content="顯示小地圖(ModeMap)" HorizontalAlignment="Left" Height="32" Margin="81,158,0,0" VerticalAlignment="Top" Width="150" Click="btnShowModeMap_Click"/>
+                    <Button x:Name="btnShowModeLive" Content="顯示Live(ModeLive)" HorizontalAlignment="Left" Height="32" Margin="236,158,0,0" VerticalAlignment="Top" Width="150" Click="btnShowModeLive_Click"/>
+                    <Button x:Name="btnShowMode15_A20_1" Content="站立(Mode15_A20_1)" HorizontalAlignment="Left" Height="32" Margin="81,47,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode15_A20_1_Click"/>
+                    <Button x:Name="btnShowMode15_A30_1" Content="趴臥(Mode15_A30_1)" HorizontalAlignment="Left" Height="32" Margin="236,47,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode15_A30_1_Click"/>
+                    <Button x:Name="btnShowMode15_A40_1" Content="四足(Mode15_A40_1)" HorizontalAlignment="Left" Height="32" Margin="391,47,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode15_A40_1_Click"/>
+                    <Button x:Name="btnShowMode2_A21_1" Content="站立Q(Mode2_A21_1)" HorizontalAlignment="Left" Height="32" Margin="81,84,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_A21_1_Click"/>
+                    <Button x:Name="btnShowMode3_A22_1" Content="站立A(Mode3_A22_1)" HorizontalAlignment="Left" Height="32" Margin="81,121,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode3_A22_1_Click"/>
+                    <Button x:Name="btnShowMode2_A31_1" Content="趴臥Q(Mode2_A31_1)" HorizontalAlignment="Left" Height="32" Margin="236,84,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_A31_1_Click"/>
+                    <Button x:Name="btnShowMode3_A32_1" Content="趴臥A(Mode2_A32_1)" HorizontalAlignment="Left" Height="32" Margin="236,121,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode3_A32_1_Click"/>
+                    <Button x:Name="btnShowMode2_A41_1" Content="四足Q(Mode2_A41_1)" HorizontalAlignment="Left" Height="32" Margin="391,84,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_A41_1_Click"/>
+                    <Button x:Name="btnShowMode3_A42_1" Content="四足A(Mode3_A42_1)" HorizontalAlignment="Left" Height="32" Margin="391,121,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode3_A42_1_Click"/>
+                    <Button x:Name="btnShowMode15_B_10" Content="黑熊花絮(Mode15_B_10)" HorizontalAlignment="Left" Height="32" Margin="81,195,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode15_B_10_Click"/>
+                    <Button x:Name="btnShowMode2_B_20_1" Content="精彩花絮(Mode2_B_20_1)" HorizontalAlignment="Left" Height="32" Margin="236,195,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_B_20_1_Click"/>
+                    <Button x:Name="btnShowMode2_B_30_1" Content="科普(Mode2_B_30_1)" HorizontalAlignment="Left" Height="32" Margin="391,195,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_B_30_1_Click"/>
+                    <ComboBox x:Name="cmbShowARBox" HorizontalAlignment="Left" Height="32" Margin="207,241,0,0" VerticalAlignment="Top" Width="150" SelectedIndex="0" SelectionChanged="cmbShowARBox_SelectionChanged">
+                        <ComboBoxItem Content="不顯示 AR 框線" VerticalContentAlignment="Center"/>
+                        <ComboBoxItem Content="顯示 AR 框線" VerticalContentAlignment="Center"/>
+                    </ComboBox>
+                    <ListBox x:Name="lsbDTData" HorizontalAlignment="Center" Height="314" Margin="0,364,0,0" VerticalAlignment="Top" Width="744" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                    <Button x:Name="btnStartDTDataReceive" Content="啟動AR資料接收" HorizontalAlignment="Left" Height="33" Margin="10,241,0,0" VerticalAlignment="Top" Width="91" Click="btnStartDTDataReceive_Click"/>
+                    <Button x:Name="btnStopDTDataReceive" Content="停止DT資料接收" HorizontalAlignment="Left" Height="33" Margin="110,241,0,0" VerticalAlignment="Top" Width="92" Click="btnStopDTDataReceive_Click"/>
+                    <Button x:Name="btnShowMode15_A50_1" Content="坐(Mode15_A50_1)" HorizontalAlignment="Left" Height="32" Margin="546,47,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode15_A50_1_Click" />
+                    <Button x:Name="btnShowMode2_A51_1" Content="坐Q(Mode2_A51_1)" HorizontalAlignment="Left" Height="32" Margin="546,84,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode2_A51_1_Click" />
+                    <Button x:Name="btnShowMode3_A52_1" Content="坐A(Mode3_A52_1)" HorizontalAlignment="Left" Height="32" Margin="546,121,0,0" VerticalAlignment="Top" Width="150" Click="btnShowMode3_A52_1_Click" />
+                    <Button x:Name="btnShowModeSP_01" Content="SP 01" HorizontalAlignment="Left" Height="32" Margin="81,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_01_Click"/>
+                    <Button x:Name="btnShowModeSP_02" Content="SP 02" HorizontalAlignment="Left" Height="32" Margin="178,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_02_Click"/>
+                    <Button x:Name="btnShowModeSP_03" Content="SP 03" HorizontalAlignment="Left" Height="32" Margin="275,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_03_Click"/>
+                    <Button x:Name="btnShowModeSP_04" Content="SP 04" HorizontalAlignment="Left" Height="32" Margin="372,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_04_Click"/>
+                    <Button x:Name="btnShowModeSP_05" Content="SP 05" HorizontalAlignment="Left" Height="32" Margin="469,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_05_Click"/>
+                    <Button x:Name="btnShowModeSP_06" Content="SP 06" HorizontalAlignment="Left" Height="32" Margin="566,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_06_Click"/>
+                    <Button x:Name="btnShowModeSP_07" Content="SP 07" HorizontalAlignment="Left" Height="32" Margin="663,285,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_07_Click"/>
+                    <Button x:Name="btnShowModeSP_09" Content="SP 09" HorizontalAlignment="Left" Height="32" Margin="81,322,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_09_Click"/>
+                    <Button x:Name="btnShowModeSP_10" Content="SP 10" HorizontalAlignment="Left" Height="32" Margin="178,322,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_10_Click"/>
+                    <Button x:Name="btnShowModeSP_11" Content="SP 11" HorizontalAlignment="Left" Height="32" Margin="275,322,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_11_Click"/>
+                    <Button x:Name="btnShowModeSP_12" Content="SP 12" HorizontalAlignment="Left" Height="32" Margin="372,322,0,0" VerticalAlignment="Top" Width="92" Click="btnShowModeSP_12_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings.Json 內容">
+                <Grid Background="#FFE5E5E5">
+                    <ListBox x:Name="lsbSettingsObject" HorizontalAlignment="Center" Height="570" Margin="0,61,0,0" VerticalAlignment="Top" Width="718" d:ItemsSource="{d:SampleData ItemCount=5}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                           TextWrapping="Wrap" 
+                                           Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button x:Name="btnReadSettingsJson" Content="讀取 Settings Json" HorizontalAlignment="Left" Height="35" Margin="23,10,0,0" VerticalAlignment="Top" Width="155" Click="btnReadSettingsJson_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="即時影像">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="btnCam0" Content="Camera 0" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam0_Click"/>
+                    <Button x:Name="btnCam1" Content="Camera 1" HorizontalAlignment="Left" Margin="148,85,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam1_Click"/>
+                    <Button x:Name="btnCam2" Content="Camera 2" HorizontalAlignment="Left" Margin="286,85,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam2_Click"/>
+                    <Button x:Name="btnCam3" Content="Camera 3" HorizontalAlignment="Left" Margin="424,85,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam3_Click"/>
+                    <Button x:Name="btnCam4" Content="Camera 4" HorizontalAlignment="Left" Margin="562,85,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam4_Click"/>
+                    <Button x:Name="btnCam5" Content="Camera 5" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam5_Click"/>
+                    <Button x:Name="btnCam6" Content="Camera 6" HorizontalAlignment="Left" Margin="148,150,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam6_Click"/>
+                    <Button x:Name="btnCam7" Content="Camera 7" HorizontalAlignment="Left" Margin="286,150,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam7_Click"/>
+                    <Button x:Name="btnCam8" Content="Camera 8" HorizontalAlignment="Left" Margin="424,150,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCam8_Click"/>
+                    <Button x:Name="btnCamLab" Content="Camera Lab" HorizontalAlignment="Left" Margin="424,216,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCamLab_Click" />
+                    <Button x:Name="btnCamReconnect" Content="全部重連" HorizontalAlignment="Left" Margin="580,216,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCamReconnect_Click" />
+                    <Button x:Name="btnCamConnect" Content="啟動即時影像" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="60" Width="133" Click="btnCamConnect_Click" />
+                </Grid>
+            </TabItem>
+
+
+        </TabControl>
+    </Grid>
+</Window>

@@ -1,0 +1,22 @@
+
+亞灣專案 壽山動物園 螢幕升降旋轉裝置 對外傳輸規格
+V1.0 2024/05/28
+
+1. 通訊協定：Socket
+2. 初始 IP：0.0.0.0
+3. 聆聽 Port：5678
+4. 伺服角色：Server，開機後，等待 Client 端連入。請使用 0.0.0.0:5678 建立 Socket，以便其他電腦連入。
+5. 傳輸方式：Client 連結成功後，即馬上傳送以下 Json 字串，無需與 Client 進行任何 Ack 程序。請保持 10FPS 的傳輸速度。
+6. 資料格式：Json，範例：{"timestamp":1716771368877932,"height":0.0,"degree":10.0}
+7. 欄位說明：
+   timestamp：long 類型，自 1970/1/1 00:00:00 到目前的 ms 數
+   height：double 類型，此裝置上，螢幕的高度，單位為 cm，包含一位小數點。最低時為 0.0，依照實際升高/降低位置，回報實際 cm 數。
+   degree：double 類型，此裝置上，螢幕的角度，單位為 角度，包含一位小數點。螢幕與場域玻璃平行時為 0 度，向右旋轉為正值，向左旋轉為負值。依照實際旋轉狀態，回報實際轉角度。
+8. 此系統建議提供能輸入校正值的畫面，能手動輸入高度和角度的校正值，作為實際與回報值之間的調整之用。
+
+
+附錄：
+1. C# 中 timestamp 建立方式
+
+    DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    long unixTimestamp = (long)(currentTime.ToUniversalTime() - unixEpoch).TotalMicroseconds;
