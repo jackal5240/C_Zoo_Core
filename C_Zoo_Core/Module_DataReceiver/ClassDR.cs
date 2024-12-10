@@ -25,8 +25,6 @@ namespace GAIA.Module_DataReceiver
 
         // 在此建立多執行序物件，包含主要的 Camera 與 透顯裝置物件，以及一個常駐執行緒，負責統整資料
         public BackgroundWorker? SendDataWorker;
-        public BackgroundWorker? ReceiveCameraDataWorker;
-        public BackgroundWorker? ReceiveMonitorWorker;
 
         // 本物件第一個被呼叫的程式，用來建構相關的物件或方法
         public void StartMethod(MainWindow mainWin, MajorMethod majorMethod)
@@ -39,17 +37,6 @@ namespace GAIA.Module_DataReceiver
 
             // 建立各執行緒與相關物件
             CreateWorker();
-
-            // 設定 Worker 的各項屬性
-            //ReceiveMonitorWorkerClass.mainWin = mainWin;
-            //ReceiveMonitorWorkerClass.bgWorker = ReceiveMonitorWorker;
-            //ReceiveMonitorWorkerClass.majorMethod = majorMethod;
-            //ReceiveMonitorWorkerClass.classDR = this;
-
-            //ReceiveCameraWorkerClass.mainWin = mainWin;
-            //ReceiveCameraWorkerClass.bgWorker = ReceiveCameraDataWorker;
-            //ReceiveCameraWorkerClass.majorMethod = majorMethod;
-            //ReceiveCameraWorkerClass.classDR = this;
 
             SendDataWorkerClass.mainWin = mainWin;
             SendDataWorkerClass.bgWorker = SendDataWorker;
@@ -79,25 +66,11 @@ namespace GAIA.Module_DataReceiver
             SendDataWorker.ProgressChanged += SendDataWorkerClass.ProgressChangedHandler;
             SendDataWorker.RunWorkerCompleted += SendDataWorkerClass.RunWorkerCompletedHandler;
         }
-
-        // 停止 ReceiveCameraDataWorker
-        public void StopReceiveCameraDataWorker()
-        {
-            ReceiveCameraWorkerClass.doWork = false;
-        }
-        // 停止 ReceiveMonitorWorker
-        public void StopReceiveMonitorWorker()
-        {
-            ReceiveMonitorWorkerClass.doWork = false;
-        }
-
         // 系統結束時，呼叫的方法，用來釋放資源
         public void StopMethod()
         {
             // 停止三個 Worker 與其資源
             SendDataWorker?.Dispose();
-            ReceiveCameraDataWorker?.Dispose();
-            ReceiveMonitorWorker?.Dispose();
         }
 
     }

@@ -77,12 +77,6 @@ namespace GAIA
             DTObject.StopZooCoreWorker();
         }
 
-        // 停止與 Camera 模組的串接
-        private void btnStopImageReco_Click(object sender, RoutedEventArgs e)
-        {
-            DRObject.StopReceiveCameraDataWorker();
-        }
-
         // 讓螢幕觸控模組生效
         private void btnStartMonitor_Click(object sender, RoutedEventArgs e)
         {
