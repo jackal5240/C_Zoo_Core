@@ -16,7 +16,7 @@ namespace C_Zoo_Core.Models
         public List<ObjectDetection> ObjectDetection { get; set; }
 
         [JsonProperty("localization")]
-        public List<int> Localization { get; set; }
+        public List<double> Localization { get; set; }
 
         [JsonProperty("camera_monitor")]
         public List<int> CameraMonitor { get; set; }
