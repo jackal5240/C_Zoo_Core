@@ -16,6 +16,8 @@ using System.Net;
 using System.Windows;
 using C_Zoo_Core.Models;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Diagnostics.Contracts;
 
 namespace GAIA.Module_DataReceiver
 {
@@ -26,6 +28,7 @@ namespace GAIA.Module_DataReceiver
         public static BackgroundWorker? bgWorker;
         public static MajorMethod? majorMethod;
         public static ClassDR? classDR;
+        public static HttpClient? httpClient;
 
         // 是否開始進行資料的轉換
         public static Boolean doWork = true;
@@ -33,6 +36,7 @@ namespace GAIA.Module_DataReceiver
         // 合成之後的 Json
         public static string tempJson = "";
         public static DataCollectionObject tempDCO = new DataCollectionObject();
+        public static SourceObject sourceObject = new SourceObject();
         public static List<object> selectedData;
         public static List<object> data_array_item_bear;
 
@@ -40,6 +44,7 @@ namespace GAIA.Module_DataReceiver
         public static int highestIndex = 0;
         public static double currentConf = -9999.0;
         public static double highestConf = -9999.0;
+        public static string apiUrl = "http://127.0.0.1:6666/data_process/combined_results";
 
         public SendDataWorkerClass()
         {
@@ -54,61 +59,19 @@ namespace GAIA.Module_DataReceiver
             {
                 try
                 {
-                    // 建立 Socket 連接
-                    using (var client = new TcpClient("127.0.0.1", 6666))
-                    using (var stream = client.GetStream())
+                    var response = httpClient.GetStringAsync(apiUrl).Result;
+                    if (response != null && !"".Equals(response))
                     {
-                        Console.WriteLine("Connected to server. Listening for JSON data...");
-
-                        // 緩衝區與資料累積
-                        var buffer = new byte[4096];
-                        var jsonBuilder = new StringBuilder();
-
-                        while (true)
-                        {
-                            // 從 Socket 中接收資料
-                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                            if (bytesRead > 0)
-                            {
-                                // 將收到的資料轉換為字串
-                                string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                                jsonBuilder.Append(receivedData);
-
-                                // 嘗試解析完整 JSON 資料
-                                try
-                                {
-                                    string jsonString = jsonBuilder.ToString();
-                                    //jsonString = "{"timestamp": "2024-12-09 22:37:42", "object_detection": [{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.31:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.32:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.33:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.34:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.35:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.36:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.37:554/stream2"},{"data":[{"class":"bear","conf":0.9242663383483887,"coordinates":[0.8250488638877869,0.7502825856208801,0.9711800217628479,0.992681622505188],"pose":"walk"}],"rtsp_url":"rtsp://admin:123456@192.168.86.38:554/stream2"},{"data":[{"class":"None","conf":[],"coordinates":[],"pose":"Undetermined"}],"rtsp_url":"rtsp://admin:123456@192.168.86.39:554/stream2"}], "localization": [0, 0, 0], "camera_monitor": [1, 1, 1, 1, 1, 1, 1, 1, 1], "area_cal": [{"area": 0, "camera": 1, "conf": 0.0}, {"area": 0, "camera": 2, "conf": 0.0}, {"area": 0, "camera": 3, "conf": 0.0}, {"area": 0, "camera": 4, "conf": 0.0}, {"area": 0, "camera": 5, "conf": 0.0}, {"area": 0, "camera": 6, "conf": 0.0}, {"area": 0, "camera": 7, "conf": 0.0}, {"area": 0, "camera": 8, "conf": 0.0}, {"area": 0, "camera": 9, "conf": 0.0}], "rotate": {"height":0.90000000000000002,"degree":779,"timestamp":1733755090}}";
-                                    SourceObject sourceObject = JsonConvert.DeserializeObject<SourceObject>(jsonString);
-
-                                    majorMethod.SetSourceObject(sourceObject);
-                                    SetDRResultData();
-                                    //// 輸出解析後的物件內容
-                                    //Console.WriteLine("Received and parsed JSON:");
-                                    //Console.WriteLine($"Timestamp: {sourceObject.Timestamp}");
-                                    //Console.WriteLine($"Object Detection Count: {sourceObject.ObjectDetection.Count}");
-                                    //Console.WriteLine($"Localization: {string.Join(", ", sourceObject.Localization)}");
-                                    //Console.WriteLine($"Camera Monitor: {string.Join(", ", sourceObject.CameraMonitor)}");
-                                    //Console.WriteLine($"Area Cal: {sourceObject.AreaCal.Count} entries");
-                                    // 回報 Progress，觸發 ProgressChanged
-                                    //bgWorker?.ReportProgress(0);
-                                    // 清空 StringBuilder 準備接收下一筆資料
-                                    jsonBuilder.Clear();
-                                }
-                                catch (JsonReaderException)
-                                {
-                                    // 如果 JSON 資料尚未完整，繼續累積
-                                    continue;
-                                }
-                            }
-                        }
+                        sourceObject = JsonConvert.DeserializeObject<SourceObject>(response);
+                        majorMethod.SetSourceObject(sourceObject);
+                        SetDRResultData();
                     }
                 }
                 catch (SocketException ex)
                 {
                     // 目前因為沒有  【辨識模組】+【旋轉機構】 資料，所以http請求會掛掉，跑到下面這行，來做假資料的串接
                     string jsonString = "{\"timestamp\": \"2024-12-09 22:37:42\", \"object_detection\": [{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.31:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.32:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.33:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.34:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.35:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.36:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.37:554/stream2\"},{\"data\":[{\"class\":\"bear\",\"conf\":0.9242663383483887,\"coordinates\":[0.8250488638877869,0.7502825856208801,0.9711800217628479,0.992681622505188],\"pose\":\"walk\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.38:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.39:554/stream2\"}], \"localization\": [0.4, 0.5, 0], \"camera_monitor\": [1, 1, 1, 1, 1, 1, 1, 1, 1], \"area_cal\": [{\"area\": 0, \"camera\": 1, \"conf\": 0.0}, {\"area\": 0, \"camera\": 2, \"conf\": 0.0}, {\"area\": 0, \"camera\": 3, \"conf\": 0.0}, {\"area\": 0, \"camera\": 4, \"conf\": 0.0}, {\"area\": 0, \"camera\": 5, \"conf\": 0.0}, {\"area\": 0, \"camera\": 6, \"conf\": 0.0}, {\"area\": 0, \"camera\": 7, \"conf\": 0.0}, {\"area\": 0, \"camera\": 8, \"conf\": 0.0}, {\"area\": 0, \"camera\": 9, \"conf\": 0.0}], \"rotate\": {\"height\":0.90000000000000002,\"degree\":779,\"timestamp\":1733755090}}";
-                    SourceObject sourceObject = JsonConvert.DeserializeObject<SourceObject>(jsonString);
+                    sourceObject = JsonConvert.DeserializeObject<SourceObject>(jsonString);
 
                     majorMethod.SetSourceObject(sourceObject);
                     SetDRResultData();
