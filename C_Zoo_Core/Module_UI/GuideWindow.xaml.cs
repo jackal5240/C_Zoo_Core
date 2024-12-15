@@ -77,8 +77,8 @@ namespace ANB_SSZ.Module_UI
         private readonly int reconnectDelayMs = 3000;
 
         private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe";
-        private readonly string[] rtspUrls = new string[9]; // 放置 9 個 RTSP URL
-        private CancellationTokenSource[] rtspCancellationTokens;
+        private Process _ffmpegProcess;
+        private Thread _streamThread;
 
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
@@ -5028,14 +5028,8 @@ namespace ANB_SSZ.Module_UI
 
             try
             {
-                // 初始化 RTSP URLs
-                for (int i = 0; i < 9; i++)
-                {
-                    rtspUrls[i] = $"rtsp://admin:123456@211.72.89.201:{31 + i}00/stream0"; // 替換為實際 RTSP URL
-                }
-
-                rtspCancellationTokens = new CancellationTokenSource[9];
-                StartRtspStreams(); // 啟動所有 RTSP 流
+                _streamThread = new Thread(ReadRTSPStream) { IsBackground = true };
+                _streamThread.Start();
 
             }
             catch (Exception ex)
@@ -5046,85 +5040,86 @@ namespace ANB_SSZ.Module_UI
             }
 
         }
-        private void StartRtspStreams()
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                StartRtspStream(i);
-            }
-        }
-        private void StartRtspStream(int index)
-        {
-            rtspCancellationTokens[index]?.Cancel(); // 停止當前流（如果有）
-
-            var cancellationToken = new CancellationTokenSource();
-            rtspCancellationTokens[index] = cancellationToken;
-
-            // 背景執行 RTSP 流
-            Task.Run(() => PlayRtspStream(rtspUrls[index], index, cancellationToken.Token));
-        }
-        private void PlayRtspStream(string url, int index, CancellationToken cancellationToken)
+        private void ReadRTSPStream()
         {
             try
             {
-                Process ffmpegProcess = new Process
+                // 啟動 FFmpeg
+                _ffmpegProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i {url} -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3100/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
                     }
                 };
 
-                ffmpegProcess.Start();
+                _ffmpegProcess.Start();
 
-                using var ffmpegOutput = ffmpegProcess.StandardOutput.BaseStream;
-                BitmapImage bitmapImage = new BitmapImage();
-
-                while (!cancellationToken.IsCancellationRequested)
+                using (var stream = _ffmpegProcess.StandardOutput.BaseStream)
                 {
-                    using (var stream = ffmpegProcess.StandardOutput.BaseStream)
-                    {
-                        // 從 FFmpeg 讀取影像流並顯示
-                        var bitmap = ReadFrame(stream);
-                        if (bitmap != null)
+                    
+                        try
                         {
-                            // 更新 UI 控件
-                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            // 從 FFmpeg 讀取影像流並顯示
+                            var bitmap = ReadFrame(stream);
+                            if (bitmap != null)
                             {
-                                GetRtspImageControl(index).Source = bitmapImage;
-                            });
+                                Dispatcher.Invoke(() =>
+                                {
+                                    VideoDisplay1.Source = bitmap;
+                                });
+                            }
                         }
-                    }
-                     
+                        catch
+                        {
+                            // 略過讀取錯誤
+                        }
+                    
                 }
-
-                ffmpegProcess.Kill();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"RTSP 流 {index + 1} 播放錯誤: {ex.Message}");
+                
             }
         }
-        private System.Windows.Controls.Image GetRtspImageControl(int index)
+
+        private BitmapImage ReadFrame(Stream stream)
         {
-            return (System.Windows.Controls.Image)this.FindName($"VideoDisplay{index + 1}");
-        }
-        private byte[] ReadFrame(Stream stream)
-        {
-            using MemoryStream ms = new MemoryStream();
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            try
             {
-                ms.Write(buffer, 0, bytesRead);
-                if (ms.Length > 1024 * 1024) // 假設每幀影像大小 < 1 MB
-                    break;
+                using (var ms = new MemoryStream())
+                {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, bytesRead);
+
+                        // 如果是 JPEG 結尾則結束
+                        if (buffer[bytesRead - 2] == 0xFF && buffer[bytesRead - 1] == 0xD9)
+                        {
+                            break;
+                        }
+                    }
+
+                    // 轉換成 BitmapImage
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.StreamSource = new MemoryStream(ms.ToArray());
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                }
             }
-            return ms.ToArray();
+            catch
+            {
+                return null;
+            }
         }
         private void grdMain_MouseDown(object sender, MouseButtonEventArgs e)
         {
