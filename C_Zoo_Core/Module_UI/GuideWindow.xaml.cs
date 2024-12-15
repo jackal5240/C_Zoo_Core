@@ -85,8 +85,6 @@ namespace ANB_SSZ.Module_UI
 
             // 設定媒體撥放器可受程式控制
             mdeMoviePlayer.LoadedBehavior = MediaState.Manual;
-            mdeMoviePlayer_B20.LoadedBehavior = MediaState.Manual;
-            mdeMoviePlayer_B30.LoadedBehavior = MediaState.Manual;
         }
 
         // 視窗載入時
@@ -2021,14 +2019,6 @@ namespace ANB_SSZ.Module_UI
             // Mode 1.5 花絮
             spnlMode15B10.Visibility = Visibility.Collapsed;
 
-            // Mode 2 B20 花絮
-            spnlMode2B20.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer_B20.Visibility = Visibility.Collapsed;
-
-            // Mode 2 B30 花絮
-            spnlMode2B30.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer_B30.Visibility = Visibility.Collapsed;
-
             // Mode 2 Map
             spnlMode2Map.Visibility = Visibility.Collapsed;
             spnlMapIcon.Visibility = Visibility.Hidden;
@@ -2167,153 +2157,23 @@ namespace ANB_SSZ.Module_UI
         // 動物園科普 - args 會傳入 1, 2, 3, 5
         private void Show_Mode2_B20(int args)
         {
-            // 顯示底層
-            ImageBrush imgb_c_mode_02_b20 = new();
-
-            // 動畫路徑
-            Uri? ModeB20MoviePath = null;
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_mode_02_b20.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_1.png", UriKind.RelativeOrAbsolute));
-
-                // 顯示動畫部份
-                switch (args)
-                {
-                    case 1:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 2:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 3:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 5:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-                }
-            }
-            else
-            {
-                imgb_c_mode_02_b20.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_20_1.png", UriKind.RelativeOrAbsolute));
-
-                // 顯示動畫部份
-                switch (args)
-                {
-                    case 1:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 2:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 3:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 5:
-                        ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-                }
-            }
-
-            spnlMode2B20.Visibility = Visibility.Visible;
-            spnlMode2B20.Background = imgb_c_mode_02_b20;
-
-            // 顯示動畫部份
-            mdeMoviePlayer_B20.Visibility = Visibility.Visible;
-            mdeMoviePlayer_B20.Source = ModeB20MoviePath;
-            mdeMoviePlayer_B20.Play();
         }
 
         // B20 Media Player
         private void mdeMoviePlayer_B20_MediaEnded(object sender, RoutedEventArgs e)
         {
             // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer_B20.Position = TimeSpan.Zero;
-            mdeMoviePlayer_B20.Play();
         }
 
         // 花絮影片 - args 會傳入 8, 14, 15, 16
         private void Show_Mode2_B30(int args)
         {
-            // 顯示底層
-            ImageBrush imgb_c_mode_02_b30 = new();
-
-            // 動畫路徑
-            Uri? ModeB30MoviePath = null;
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_mode_02_b30.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_1.png", UriKind.RelativeOrAbsolute));
-
-                // 顯示動畫部份
-                switch (args)
-                {
-                    case 8:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_05.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 14:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_07.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 15:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_08.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 16:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_06.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-                }
-            }
-            else
-            {
-                imgb_c_mode_02_b30.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_30_1.png", UriKind.RelativeOrAbsolute));
-
-                // 顯示動畫部份
-                switch (args)
-                {
-                    case 8:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_05.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 14:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_07.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 15:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_08.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-
-                    case 16:
-                        ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_06.mp4", UriKind.RelativeOrAbsolute);
-                        break;
-                }
-            }
-
-            spnlMode2B30.Visibility = Visibility.Visible;
-            spnlMode2B30.Background = imgb_c_mode_02_b30;
-
-            // 顯示動畫部份
-            mdeMoviePlayer_B30.Visibility = Visibility.Visible;
-            mdeMoviePlayer_B30.Source = ModeB30MoviePath;
-            mdeMoviePlayer_B30.Play();
         }
 
         // B30 Media Player
         private void mdeMoviePlayer_B30_MediaEnded(object sender, RoutedEventArgs e)
         {
             // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer_B30.Position = TimeSpan.Zero;
-            mdeMoviePlayer_B30.Play();
         }
 
         // 顯示 Map 圖層

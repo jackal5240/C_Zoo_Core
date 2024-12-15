@@ -36,14 +36,6 @@
             </Canvas>
         </StackPanel>
 
-        <!-- Mode 2 精彩花絮 ZOO_B_20_1 -->
-        <MediaElement x:Name="mdeMoviePlayer_B20" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B20_MediaEnded"/>
-        <StackPanel x:Name="spnlMode2B20" Height="540" Width="960" Visibility="Hidden"/>
-
-        <!-- Mode 2 動物園科普 ZOO_B_30_1 -->
-        <MediaElement x:Name="mdeMoviePlayer_B30" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B30_MediaEnded"/>
-        <StackPanel x:Name="spnlMode2B30" Height="540" Width="960" Visibility="Hidden"/>
-
         <!-- Mode 2 Map -->
         <StackPanel x:Name="spnlMode2Map" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
