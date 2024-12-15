@@ -8,10 +8,6 @@
         Title="GuideWindow" Background="Black" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None" ResizeMode="NoResize">
     <Grid x:Name="grdMain" Height="540" Width="960" MouseDown="grdMain_MouseDown">
 
-        <!-- Mode 1 -->
-        <MediaElement x:Name="mdeMoviePlayer" MediaEnded="mdeMoviePlayer_MediaEnded" Height="540" Width="960" Visibility="Hidden"/>
-        <StackPanel x:Name="spnlMode1" Height="540" Width="960" Visibility="Hidden"/>
-
         <!-- Mode 1.5 黑熊花絮 -->
         <StackPanel x:Name="spnlMode15B10" Height="540" Width="960" Visibility="Hidden">
             <Canvas>

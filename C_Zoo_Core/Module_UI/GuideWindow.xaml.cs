@@ -82,9 +82,6 @@ namespace ANB_SSZ.Module_UI
         public GuideWindow()
         {
             InitializeComponent();
-
-            // 設定媒體撥放器可受程式控制
-            mdeMoviePlayer.LoadedBehavior = MediaState.Manual;
         }
 
         // 視窗載入時
@@ -2011,11 +2008,6 @@ namespace ANB_SSZ.Module_UI
         // 關閉所有的 spnl
         private void HideAndResetAllPanel()
         {
-            // Mode 1 首頁
-            spnlMode1.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer.Visibility = Visibility.Collapsed;
-
-
             // Mode 1.5 花絮
             spnlMode15B10.Visibility = Visibility.Collapsed;
 
@@ -2055,22 +2047,12 @@ namespace ANB_SSZ.Module_UI
                 imgb_c_mode_01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
             }
 
-            spnlMode1.Visibility = Visibility.Visible;
-            spnlMode1.Background = imgb_c_mode_01;
-
-            // 顯示動畫部份
-            Uri Mode1MoviePath = new Uri(".\\Image\\ZOO_A_10.mp4", UriKind.RelativeOrAbsolute);
-            mdeMoviePlayer.Visibility = Visibility.Visible;
-            mdeMoviePlayer.Source = Mode1MoviePath;
-            mdeMoviePlayer.Play();
         }
 
         // 影片撥放到最後時
         private void mdeMoviePlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer.Position = TimeSpan.Zero;
-            mdeMoviePlayer.Play();
         }
 
         // 顯示 Mode 1.5 站立
