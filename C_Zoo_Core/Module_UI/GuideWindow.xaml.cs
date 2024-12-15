@@ -77,8 +77,8 @@ namespace ANB_SSZ.Module_UI
         private readonly int reconnectDelayMs = 3000;
 
         private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe";
-        private Process _ffmpegProcess;
-        private Thread _streamThread;
+        private Process _ffmpegProcess1, _ffmpegProcess2, _ffmpegProcess3, _ffmpegProcess4, _ffmpegProcess5, _ffmpegProcess6, _ffmpegProcess7, _ffmpegProcess8, _ffmpegProcess9;
+        private Thread _streamThread1, _streamThread2, _streamThread3, _streamThread4, _streamThread5, _streamThread6, _streamThread7, _streamThread8, _streamThread9;
 
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
@@ -2098,6 +2098,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 0)
                 {
+                    VideoDisplay1.Visibility = Visibility.Visible;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     // if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
                     if (majorMethod.LiveButton_OldValue[0] == true)
@@ -2144,6 +2153,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 1)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Visible;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[1] == true)
                     {
@@ -2189,6 +2207,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 2)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Visible;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[2] == true)
                     {
@@ -2234,6 +2261,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 3)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Visible;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[3] == true)
                     {
@@ -2279,6 +2315,15 @@ namespace ANB_SSZ.Module_UI
                 // No.5 攝影機是放映者
                 if (liveCamIndex == 4)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Visible;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[4] == true)
                     {
@@ -2324,6 +2369,15 @@ namespace ANB_SSZ.Module_UI
                 // No.6 攝影機是放映者
                 if (liveCamIndex == 5)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Visible;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[5] == true)
                     {
@@ -2369,6 +2423,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 6)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Visible;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[6] == true)
                     {
@@ -2414,6 +2477,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 7)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Visible;
+                    VideoDisplay9.Visibility = Visibility.Collapsed;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[7] == true)
                     {
@@ -2459,6 +2531,15 @@ namespace ANB_SSZ.Module_UI
             {
                 if (liveCamIndex == 8)
                 {
+                    VideoDisplay1.Visibility = Visibility.Collapsed;
+                    VideoDisplay2.Visibility = Visibility.Collapsed;
+                    VideoDisplay3.Visibility = Visibility.Collapsed;
+                    VideoDisplay4.Visibility = Visibility.Collapsed;
+                    VideoDisplay5.Visibility = Visibility.Collapsed;
+                    VideoDisplay6.Visibility = Visibility.Collapsed;
+                    VideoDisplay7.Visibility = Visibility.Collapsed;
+                    VideoDisplay8.Visibility = Visibility.Collapsed;
+                    VideoDisplay9.Visibility = Visibility.Visible;
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
                     if (majorMethod.LiveButton_OldValue[8] == true)
                     {
@@ -5028,8 +5109,24 @@ namespace ANB_SSZ.Module_UI
 
             try
             {
-                _streamThread = new Thread(ReadRTSPStream) { IsBackground = true };
-                _streamThread.Start();
+                _streamThread1 = new Thread(ReadRTSPStream1) { IsBackground = true };
+                _streamThread1.Start();
+                _streamThread2 = new Thread(ReadRTSPStream2) { IsBackground = true };
+                _streamThread2.Start();
+                _streamThread3 = new Thread(ReadRTSPStream3) { IsBackground = true };
+                _streamThread3.Start();
+                _streamThread4 = new Thread(ReadRTSPStream4) { IsBackground = true };
+                _streamThread4.Start();
+                _streamThread5 = new Thread(ReadRTSPStream5) { IsBackground = true };
+                _streamThread5.Start();
+                _streamThread6 = new Thread(ReadRTSPStream6) { IsBackground = true };
+                _streamThread6.Start();
+                _streamThread7 = new Thread(ReadRTSPStream7) { IsBackground = true };
+                _streamThread7.Start();
+                _streamThread8 = new Thread(ReadRTSPStream8) { IsBackground = true };
+                _streamThread8.Start();
+                _streamThread9 = new Thread(ReadRTSPStream9) { IsBackground = true };
+                _streamThread9.Start();
 
             }
             catch (Exception ex)
@@ -5040,12 +5137,12 @@ namespace ANB_SSZ.Module_UI
             }
 
         }
-        private void ReadRTSPStream()
+        private void ReadRTSPStream1()
         {
             try
             {
                 // 啟動 FFmpeg
-                _ffmpegProcess = new Process
+                _ffmpegProcess1 = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -5057,36 +5154,403 @@ namespace ANB_SSZ.Module_UI
                     }
                 };
 
-                _ffmpegProcess.Start();
+                _ffmpegProcess1.Start();
 
-                using (var stream = _ffmpegProcess.StandardOutput.BaseStream)
+                using (var stream = _ffmpegProcess1.StandardOutput.BaseStream)
                 {
-                    
-                        try
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
                         {
-                            // 從 FFmpeg 讀取影像流並顯示
-                            var bitmap = ReadFrame(stream);
-                            if (bitmap != null)
+                            Dispatcher.Invoke(() =>
                             {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    VideoDisplay1.Source = bitmap;
-                                });
-                            }
+                                VideoDisplay1.Source = bitmap;
+                            });
                         }
-                        catch
-                        {
-                            // 略過讀取錯誤
-                        }
-                    
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
                 }
             }
             catch (Exception ex)
             {
-                
+
             }
         }
+        private void ReadRTSPStream2()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess2 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3200/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
 
+                _ffmpegProcess2.Start();
+
+                using (var stream = _ffmpegProcess2.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay2.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream3()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess3 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3300/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess3.Start();
+
+                using (var stream = _ffmpegProcess3.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay3.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream4()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess4 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3400/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess4.Start();
+
+                using (var stream = _ffmpegProcess4.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay4.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream5()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess5 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3500/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess5.Start();
+
+                using (var stream = _ffmpegProcess5.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay8.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream6()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess6 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3600/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess6.Start();
+
+                using (var stream = _ffmpegProcess6.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay6.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream7()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess7 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3700/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess7.Start();
+
+                using (var stream = _ffmpegProcess7.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay7.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream8()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess8 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3800/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess8.Start();
+
+                using (var stream = _ffmpegProcess8.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay8.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void ReadRTSPStream9()
+        {
+            try
+            {
+                // 啟動 FFmpeg
+                _ffmpegProcess9 = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3900/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                _ffmpegProcess9.Start();
+
+                using (var stream = _ffmpegProcess9.StandardOutput.BaseStream)
+                {
+
+                    try
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                VideoDisplay9.Source = bitmap;
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // 略過讀取錯誤
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
         private BitmapImage ReadFrame(Stream stream)
         {
             try
