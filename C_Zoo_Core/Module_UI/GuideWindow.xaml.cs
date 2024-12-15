@@ -590,34 +590,6 @@ namespace ANB_SSZ.Module_UI
                         return;
                     }
 
-                    // 若此時 IsModeSP_01 有時，就把 SP 01 文字秀出來
-                    if ((DateTime.Now - majorMethod.ModeSP1Time) >= MajorMethod.ModeSP1TimeSpan)
-                    {
-                        if (IsModeSP_01 == true)
-                        {
-                            // 加上多國語言
-                            ImageBrush imgb_sp01 = new();
-
-                            if (languageModel == LanguageMode.Chinese)
-                            {
-                                imgb_sp01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_01.png", UriKind.RelativeOrAbsolute));
-                            }
-                            else
-                            {
-                                imgb_sp01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_01.png", UriKind.RelativeOrAbsolute));
-                            }
-
-                            spnlModeSP_01.Background = imgb_sp01;
-                            spnlModeSP_01.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            spnlModeSP_01.Visibility = Visibility.Hidden;
-                        }
-
-                        // 儲存更新時間
-                        majorMethod.ModeSP1Time = DateTime.Now;
-                    }
 
                     drawMode15B10Icon();
 
@@ -2213,38 +2185,6 @@ namespace ANB_SSZ.Module_UI
             cnsLive.Visibility = Visibility.Hidden;
             //mainVideoView.Visibility = Visibility.Hidden;
 
-            // 盲區所有的 Panel
-            spnlModeSP_01.Visibility = Visibility.Hidden;
-
-            spnlModeSP_02_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_02.Visibility = Visibility.Hidden;
-
-            spnlModeSP_03_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_03.Visibility = Visibility.Hidden;
-
-            spnlModeSP_04_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_04.Visibility = Visibility.Hidden;
-
-            spnlModeSP_05_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_05.Visibility = Visibility.Hidden;
-
-            spnlModeSP_06_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_06.Visibility = Visibility.Hidden;
-
-            spnlModeSP_07_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_07.Visibility = Visibility.Hidden;
-
-            spnlModeSP_09_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_09.Visibility = Visibility.Hidden;
-
-            spnlModeSP_10_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_10.Visibility = Visibility.Hidden;
-
-            spnlModeSP_11_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_11.Visibility = Visibility.Hidden;
-
-            spnlModeSP_12_BG.Visibility = Visibility.Hidden;
-            spnlModeSP_12.Visibility = Visibility.Hidden;
         }
 
         // 顯示 Mode 0 的畫面(ZOO_A_10)
@@ -3677,266 +3617,55 @@ namespace ANB_SSZ.Module_UI
         // 盲區 SP_02
         private void Show_ModeSP_02()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_02_bg = new();
-            ImageBrush imgb_c_modesp_02 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_02_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_02.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_02.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_02_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_02.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_02.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_02_BG.Visibility = Visibility.Visible;
-            spnlModeSP_02_BG.Background = imgb_c_modesp_02_bg;
-
-            spnlModeSP_02.Visibility = Visibility.Visible;
-            spnlModeSP_02.Background = imgb_c_modesp_02;
         }
 
         // 盲區 SP_03
         private void Show_ModeSP_03()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_03_bg = new();
-            ImageBrush imgb_c_modesp_03 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_03_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_03.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_03.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_03_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_03.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_03.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_03_BG.Visibility = Visibility.Visible;
-            spnlModeSP_03_BG.Background = imgb_c_modesp_03_bg;
-
-            spnlModeSP_03.Visibility = Visibility.Visible;
-            spnlModeSP_03.Background = imgb_c_modesp_03;
         }
 
         // 盲區 SP_04
         private void Show_ModeSP_04()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_04_bg = new();
-            ImageBrush imgb_c_modesp_04 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_04_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_04.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_04.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_04_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_04.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_04.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_04_BG.Visibility = Visibility.Visible;
-            spnlModeSP_04_BG.Background = imgb_c_modesp_04_bg;
-
-            spnlModeSP_04.Visibility = Visibility.Visible;
-            spnlModeSP_04.Background = imgb_c_modesp_04;
         }
 
         // 盲區 SP_05
         private void Show_ModeSP_05()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_05_bg = new();
-            ImageBrush imgb_c_modesp_05 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_05_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_05.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_05.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_05_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_05.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_05.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_05_BG.Visibility = Visibility.Visible;
-            spnlModeSP_05_BG.Background = imgb_c_modesp_05_bg;
-
-            spnlModeSP_05.Visibility = Visibility.Visible;
-            spnlModeSP_05.Background = imgb_c_modesp_05;
         }
 
         // 盲區 SP_06
         private void Show_ModeSP_06()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_06_bg = new();
-            ImageBrush imgb_c_modesp_06 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_06_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_06.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_06.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_06_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_06.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_06.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_06_BG.Visibility = Visibility.Visible;
-            spnlModeSP_06_BG.Background = imgb_c_modesp_06_bg;
-
-            spnlModeSP_06.Visibility = Visibility.Visible;
-            spnlModeSP_06.Background = imgb_c_modesp_06;
         }
 
         // 盲區 SP_07
         private void Show_ModeSP_07()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_07_bg = new();
-            ImageBrush imgb_c_modesp_07 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_07_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_07.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_07.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_07_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_07.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_07.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_07_BG.Visibility = Visibility.Visible;
-            spnlModeSP_07_BG.Background = imgb_c_modesp_07_bg;
-
-            spnlModeSP_07.Visibility = Visibility.Visible;
-            spnlModeSP_07.Background = imgb_c_modesp_07;
         }
 
         // 盲區 SP_09
         private void Show_ModeSP_09()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_09_bg = new();
-            ImageBrush imgb_c_modesp_09 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_09_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_09.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_09.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_09_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_09.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_09.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_09_BG.Visibility = Visibility.Visible;
-            spnlModeSP_09_BG.Background = imgb_c_modesp_09_bg;
-
-            spnlModeSP_09.Visibility = Visibility.Visible;
-            spnlModeSP_09.Background = imgb_c_modesp_09;
         }
 
         // 盲區 SP_10
         private void Show_ModeSP_10()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_10_bg = new();
-            ImageBrush imgb_c_modesp_10 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_10_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_10.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_10_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_10.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_10.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_10_BG.Visibility = Visibility.Visible;
-            spnlModeSP_10_BG.Background = imgb_c_modesp_10_bg;
-
-            spnlModeSP_10.Visibility = Visibility.Visible;
-            spnlModeSP_10.Background = imgb_c_modesp_10;
         }
 
         // 盲區 SP_11
         private void Show_ModeSP_11()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_11_bg = new();
-            ImageBrush imgb_c_modesp_11 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_11_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_11.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_11.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_11_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_11.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_11.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_11_BG.Visibility = Visibility.Visible;
-            spnlModeSP_11_BG.Background = imgb_c_modesp_11_bg;
-
-            spnlModeSP_11.Visibility = Visibility.Visible;
-            spnlModeSP_11.Background = imgb_c_modesp_11;
         }
 
         // 盲區 SP_12
         private void Show_ModeSP_12()
         {
-            // 顯示圖層
-            ImageBrush imgb_c_modesp_12_bg = new();
-            ImageBrush imgb_c_modesp_12 = new();
-
-            // 中英文之圖型
-            if (languageModel == LanguageMode.Chinese)
-            {
-                imgb_c_modesp_12_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_12.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_12.png", UriKind.RelativeOrAbsolute));
-            }
-            else
-            {
-                imgb_c_modesp_12_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
-                imgb_c_modesp_12.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_12.png", UriKind.RelativeOrAbsolute));
-            }
-
-            spnlModeSP_12_BG.Visibility = Visibility.Visible;
-            spnlModeSP_12_BG.Background = imgb_c_modesp_12_bg;
-
-            spnlModeSP_12.Visibility = Visibility.Visible;
-            spnlModeSP_12.Background = imgb_c_modesp_12;
         }
 
         private void hideAllRTSPStream()
         {
-            // mainVideoView.Visibility = Visibility.Hidden;
         }
 
         // 相機重新連接
@@ -3944,31 +3673,6 @@ namespace ANB_SSZ.Module_UI
         {
             // 測試用，先停 3 秒
             Thread.Sleep(3000);
-
-            //mediaPlayerCam0 = null;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam1;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam2;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam3;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam4;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam5;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam6;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam7;
-            //public LibVLCSharp.Shared.MediaPlayer mediaPlayerCam8;
-
-            //mediaCam0 = null;
-            // 是否要先停止畫面元件的連結？
-            //vdwMode2LiveCam0.MediaPlayer = null;
-            //vdwMode2LiveCam1.MediaPlayer = null;
-            //vdwMode2LiveCam2.MediaPlayer = null;
-            //vdwMode2LiveCam3.MediaPlayer = null;
-            //vdwMode2LiveCam4.MediaPlayer = null;
-            //vdwMode2LiveCam5.MediaPlayer = null;
-            //vdwMode2LiveCam6.MediaPlayer = null;
-            //vdwMode2LiveCam7.MediaPlayer = null;
-            //vdwMode2LiveCam8.MediaPlayer = null;
-
-            // 重新再連接一次
-            // ConnectVideoCam();
         }
 
         // 建立與場域攝影機的連結
