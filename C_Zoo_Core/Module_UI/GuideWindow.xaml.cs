@@ -42,7 +42,6 @@ namespace ANB_SSZ.Module_UI
         public LanguageMode languageModel = LanguageMode.Chinese;
 
         // RTSP 相關設定
-        private List<MediaPlayer> _mediaPlayers;
 
         // 用來計算即時影像的 FPS
         private DateTime LastFpsUpdate_Cam0 = DateTime.Now;
@@ -68,6 +67,9 @@ namespace ANB_SSZ.Module_UI
         // 目前即時影像的畫面編號
         public int liveCamIndex = 0;
 
+        // 9 號相機的問題 QA
+        public int liveCam9QAIndex = 0;  // 0 代表第一題，當加到 4 時，就回到 0
+
         // 即時影像重連的相關設定
         private CancellationTokenSource reconnectCts;
         private readonly int maxReconnectAttempts = 5;
@@ -76,17 +78,11 @@ namespace ANB_SSZ.Module_UI
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
 
-        private int _currentStreamIndex = -1;
-        private string _networkInterfaceIp = "192.168.2.1"; // 指定使用的網卡 IP
-
         public GuideWindow()
         {
             InitializeComponent();
 
             // 設定媒體撥放器可受程式控制
-            mdeMoviePlayer.LoadedBehavior = MediaState.Manual;
-            mdeMoviePlayer_B20.LoadedBehavior = MediaState.Manual;
-            mdeMoviePlayer_B30.LoadedBehavior = MediaState.Manual;
         }
 
         // 視窗載入時
@@ -96,10 +92,19 @@ namespace ANB_SSZ.Module_UI
             // InitCamAsync();
 
             // 先關閉所有的 StackPanel
-            //HideAndResetAllPanel();
+            HideAndResetAllPanel();
 
             // 啟動即時影像
-            //ConnectVideoCam();
+            ConnectVideoCam();
+
+            // 預先載入一些圖(但會延遲啟動時間)
+            PreloadImage();
+        }
+
+
+        // 預先載入一些圖
+        private void PreloadImage()
+        {
         }
 
         // 用中介的方式來非同步啟動攝影機
@@ -133,11 +138,32 @@ namespace ANB_SSZ.Module_UI
             // 連續不斷的計算熊在地圖中的位置，並放到存放區
             calcMapBearPosition();
 
+            // 2024/12/14 連續計算 9 隻攝影機有沒有偵測到熊，並放到 old value 中
+            recordLiveButtonStatus();
+
             // 進行畫面繪製，要特別注意畫面閃動的問題
             changeModeByARData();
 
             // 在此進行 AR 框與花絮的繪製
             drawARData(majorMethod.showARData);
+        }
+
+        // 2024/12/14 連續計算 9 隻攝影機有沒有偵測到熊，並放到 old value 中
+        public void recordLiveButtonStatus()
+        {
+            List<bool> tempBearInCamera = [false, false, false, false, false, false, false, false, false];
+
+            // 收集目前的相機資料
+            for (int i = 0; i < tempBearInCamera.Count; i++)
+            {
+                tempBearInCamera[i] = BearInCamera(i);
+            }
+
+            // 若任何一隻相機有值(true)的話，就存到 old_value 中
+            if (tempBearInCamera.Contains(true))
+            {
+                majorMethod.LiveButton_OldValue = tempBearInCamera.ToList();
+            }
         }
 
         // 連續不斷的計算熊在地圖中的位置，並放到 Value 存放區
@@ -156,7 +182,7 @@ namespace ANB_SSZ.Module_UI
             //const int OriginY = 58;
             // 2024/12/05 更改為 65
             const int OriginY = 65;
- 
+
             const double MapRatioX = 60.0;
             const double MapRatioY = 45.0;
 
@@ -255,6 +281,8 @@ namespace ANB_SSZ.Module_UI
             int BearTop = -1;
             int BearRight = -1;
             int BearBottom = -1;
+            int ARLeft = -1;
+            int ARTop = -1;
 
             // 顯示 screen_left_top 資料
             ScreenLeft = bearObject.ScreenLeftTop[0];
@@ -278,7 +306,13 @@ namespace ANB_SSZ.Module_UI
             if (((bearObject.ScreenMode == "0") || (bearObject.ScreenMode == "-1")) &&
                 (currentMode == ModeKind.Mode15_B10))
             {
-                doSpecialPositionHandler();
+                if ((DateTime.Now - majorMethod.ChangeSPTime) >= MajorMethod.ChangeSPTimeSpan)
+                {
+                    // 更新 SP Mode 的時間
+                    majorMethod.ChangeSPTime = DateTime.Now;
+
+                    doSpecialPositionHandler();
+                }
             }
 
             // 依照目前的 ScreenMode 來分別處理
@@ -294,12 +328,13 @@ namespace ANB_SSZ.Module_UI
                     // 當在首頁時，利用熊的 BBOX 中心點，切換 ScreenMode
 
                     // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if ((BearCenter <= 240) && (BearCenter >= 0) || ((BearCenter >= 720) && (BearCenter <= 960)))
-                    {
-                        SetScreenMode(ModeKind.Mode1);
+                    // 2024/12/12 修改
+                    //if ((BearCenter <= 240) && (BearCenter >= 0) || ((BearCenter >= 720) && (BearCenter <= 960)))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode1);
 
-                        return;
-                    }
+                    //    return;
+                    //}
 
                     // 當熊在螢幕外時，就切換到黑熊花絮畫面
                     if (((BearLeft + BearRight) / 2 < 0) || ((BearLeft + BearRight) / 2 > 960))
@@ -310,7 +345,7 @@ namespace ANB_SSZ.Module_UI
                     }
 
                     // 當熊在螢幕中心時，依照姿勢，切換到不同的 站立，趴臥，四足
-                    if (((BearLeft + BearRight) / 2 >= 240) && ((BearLeft + BearRight) / 2 <= 720))
+                    if (((BearLeft + BearRight) / 2 >= 0) && ((BearLeft + BearRight) / 2 <= 960))
                     {
                         switch (bearMode)
                         {
@@ -381,24 +416,121 @@ namespace ANB_SSZ.Module_UI
                 // 站立系列
                 case ModeKind.Mode15_A20_1:
 
-                    // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if (((BearLeft + BearRight) / 2 <= 240) || ((BearLeft + BearRight) / 2 >= 720))
-                    {
-                        SetScreenMode(ModeKind.Mode1);
+                    // 取消 ==> 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
+                    // 2024/12/13
+                    // 如果1.5階時, 突然全部相機都辨識不到, 也不再盲區, 那就先維持1.5階直到收到下一個辨識為止。
+                    // 動作：把下面整段 Mark 掉
+                    //if (((BearLeft + BearRight) / 2 <= 0) || ((BearLeft + BearRight) / 2 >= 960))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode0);
 
-                        return;
+                    //    return;
+                    //}
+
+                    // 熊在廊道，回到 Mode0
+                    if (majorMethod.LiveButton_OldValue[8] == true)
+                        SetScreenMode(ModeKind.Mode0);
+
+                    // 四個模式，平行轉換系列
+                    switch (bearMode)
+                    {
+                        // 站立系列
+                        case "stand":
+                            //spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            // 原來是這樣，就不用轉換
+                            // SetScreenMode(ModeKind.Mode15_A20_1);
+                            break;
+
+                        // 趴臥系列
+                        case "lie":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A30_1);
+                            break;
+
+                        // 四足系列
+                        case "walk":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A40_1);
+                            break;
+
+                        // 坐 系列
+                        case "sit":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A50_1);
+                            break;
                     }
 
                     // 在此顯示 AR 框
-                    ImageBrush imgb_ar_a22 = new();
-                    imgb_ar_a22.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_22_1_AR.png", UriKind.RelativeOrAbsolute));
-                    spnlMode3A22_A_AR.Background = imgb_ar_a22;
+                    if (majorMethod.imgb_ar_a22 == null)
+                    {
+                        majorMethod.imgb_ar_a22 = new();
+                        majorMethod.imgb_ar_a22.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_AR_stand.png", UriKind.RelativeOrAbsolute));
+                    }
+                    spnlMode3A22_A_AR.Background = majorMethod.imgb_ar_a22;
 
                     // 設定左上與寬高
-                    Canvas.SetLeft(spnlMode3A22_A_AR, BearLeft);
-                    Canvas.SetTop(spnlMode3A22_A_AR, BearTop);
-                    spnlMode3A22_A_AR.Width = BearRight - BearLeft;
-                    spnlMode3A22_A_AR.Height = BearBottom - BearTop;
+                    //Canvas.SetLeft(spnlMode3A22_A_AR, BearLeft);
+                    //Canvas.SetTop(spnlMode3A22_A_AR, BearTop);
+                    //spnlMode3A22_A_AR.Width = BearRight - BearLeft;
+                    //spnlMode3A22_A_AR.Height = BearBottom - BearTop;
+
+                    // 當 ScreenMode 為 0 或 -1 時，就不用計算 AR 中心值
+                    if (bearObject.ScreenMode == "1")
+                    {
+                        // 即時 AR
+                        ARLeft = (int)((BearLeft + BearRight) / 2) - 233;
+                        ARTop = (int)((BearTop + BearBottom) / 2) - 203;
+
+                        majorMethod.ARLeft_OldValue = ARLeft;
+                        majorMethod.ARRight_OldValue = ARTop;
+
+                        // 畫面沒有被凍住，數值歸零
+                        majorMethod.HaveFix = false;
+                        majorMethod.Mode15FixHeight = 0.0;
+                        majorMethod.Mode15FixDegree = 0.0;
+                    }
+                    else
+                    {
+                        // 當第一次要被凍住時，取得角度和高度
+                        if (majorMethod.HaveFix == false)
+                        {
+                            majorMethod.HaveFix = true;
+                            majorMethod.Mode15FixHeight = majorMethod.machineHeight;
+                            majorMethod.Mode15FixDegree = majorMethod.machineDegree;
+                        }
+
+                        // 取 Old Value 加高度角度旋轉值
+                        // 水平旋轉 : -2.58 * (當前旋轉角度 - 最後有效位置旋轉角度) + 最後有效位置X點位
+                        // 升降垂直: -0.11 * (當前升降高度 - 最後有效位置高度) + 最後有效高度Y點位
+                        ARLeft = majorMethod.ARLeft_OldValue + (int)((majorMethod.machineDegree - majorMethod.Mode15FixDegree) * (-2.58));
+                        ARTop = majorMethod.ARRight_OldValue + (int)((majorMethod.machineHeight - majorMethod.Mode15FixHeight) * (-0.11));
+                    }
+
+                    if (spnlMode3A22_A_AR.Visibility == Visibility.Visible)
+                    {
+                        MoveImageByAnimation(spnlMode3A22_A_AR, ARLeft, ARTop);
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(spnlMode3A22_A_AR, ARLeft);
+                        Canvas.SetTop(spnlMode3A22_A_AR, ARTop);
+                    }
 
                     spnlMode3A22_A_AR.Visibility = Visibility.Visible;
 
@@ -424,24 +556,122 @@ namespace ANB_SSZ.Module_UI
                 // 趴臥系列
                 case ModeKind.Mode15_A30_1:
 
+                    // 取消 ==> 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
+                    // 2024/12/13
+                    // 如果1.5階時, 突然全部相機都辨識不到, 也不再盲區, 那就先維持1.5階直到收到下一個辨識為止。
+                    // 動作：把下面整段 Mark 掉
                     // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if (((BearLeft + BearRight) / 2 <= 240) || ((BearLeft + BearRight) / 2 >= 720))
-                    {
+                    //if (((BearLeft + BearRight) / 2 <= 0) || ((BearLeft + BearRight) / 2 >= 960))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode0);
+
+                    //    return;
+                    //}
+
+                    // 熊在廊道，回到 Mode0
+                    if (majorMethod.LiveButton_OldValue[8] == true)
                         SetScreenMode(ModeKind.Mode0);
 
-                        return;
+                    // 四個模式，平行轉換系列
+                    switch (bearMode)
+                    {
+                        // 站立系列
+                        case "stand":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A20_1);
+                            break;
+
+                        // 趴臥系列
+                        case "lie":
+                            //spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            // 原來是這樣，就不用轉換
+                            //SetScreenMode(ModeKind.Mode15_A30_1);
+                            break;
+
+                        // 四足系列
+                        case "walk":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A40_1);
+                            break;
+
+                        // 坐 系列
+                        case "sit":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A50_1);
+                            break;
                     }
 
                     // 在此顯示 AR 框
-                    ImageBrush imgb_ar_a32 = new();
-                    imgb_ar_a32.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_22_1_AR.png", UriKind.RelativeOrAbsolute));
-                    spnlMode3A32_A_AR.Background = imgb_ar_a32;
+                    if (majorMethod.imgb_ar_a32 == null)
+                    {
+                        majorMethod.imgb_ar_a32 = new();
+                        majorMethod.imgb_ar_a32.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_AR_lie.png", UriKind.RelativeOrAbsolute));
+                    }
+                    spnlMode3A32_A_AR.Background = majorMethod.imgb_ar_a32;
 
                     // 設定左上與寬高
-                    Canvas.SetLeft(spnlMode3A32_A_AR, BearLeft);
-                    Canvas.SetTop(spnlMode3A32_A_AR, BearTop);
-                    spnlMode3A32_A_AR.Width = BearRight - BearLeft;
-                    spnlMode3A32_A_AR.Height = BearBottom - BearTop;
+                    //Canvas.SetLeft(spnlMode3A32_A_AR, BearLeft);
+                    //Canvas.SetTop(spnlMode3A32_A_AR, BearTop);
+                    //spnlMode3A32_A_AR.Width = BearRight - BearLeft;
+                    //spnlMode3A32_A_AR.Height = BearBottom - BearTop;
+
+                    // 當 ScreenMode 為 0 或 -1 時，就不用計算 AR 中心值
+                    if (bearObject.ScreenMode == "1")
+                    {
+                        // 即時 AR
+                        ARLeft = (int)((BearLeft + BearRight) / 2) - 233;
+                        ARTop = (int)((BearTop + BearBottom) / 2) - 203;
+
+                        majorMethod.ARLeft_OldValue = ARLeft;
+                        majorMethod.ARRight_OldValue = ARTop;
+
+                        // 畫面沒有被凍住，數值歸零
+                        majorMethod.HaveFix = false;
+                        majorMethod.Mode15FixHeight = 0.0;
+                        majorMethod.Mode15FixDegree = 0.0;
+                    }
+                    else
+                    {
+                        // 當第一次要被凍住時，取得角度和高度
+                        if (majorMethod.HaveFix == false)
+                        {
+                            majorMethod.HaveFix = true;
+                            majorMethod.Mode15FixHeight = majorMethod.machineHeight;
+                            majorMethod.Mode15FixDegree = majorMethod.machineDegree;
+                        }
+
+                        // 取 Old Value 加高度角度旋轉值
+                        // 水平旋轉 : -2.58 * (當前旋轉角度 - 最後有效位置旋轉角度) + 最後有效位置X點位
+                        // 升降垂直: -0.11 * (當前升降高度 - 最後有效位置高度) + 最後有效高度Y點位
+                        ARLeft = majorMethod.ARLeft_OldValue + (int)((majorMethod.machineDegree - majorMethod.Mode15FixDegree) * (-2.58));
+                        ARTop = majorMethod.ARRight_OldValue + (int)((majorMethod.machineHeight - majorMethod.Mode15FixHeight) * (-0.11));
+                    }
+
+                    if (spnlMode3A32_A_AR.Visibility == Visibility.Visible)
+                    {
+                        MoveImageByAnimation(spnlMode3A32_A_AR, ARLeft, ARTop);
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(spnlMode3A32_A_AR, ARLeft);
+                        Canvas.SetTop(spnlMode3A32_A_AR, ARTop);
+                    }
 
                     spnlMode3A32_A_AR.Visibility = Visibility.Visible;
 
@@ -468,23 +698,122 @@ namespace ANB_SSZ.Module_UI
                 case ModeKind.Mode15_A40_1:
 
                     // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if (((BearLeft + BearRight) / 2 <= 240) || ((BearLeft + BearRight) / 2 >= 720))
-                    {
+                    // 取消 ==> 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
+                    // 2024/12/13
+                    // 如果1.5階時, 突然全部相機都辨識不到, 也不再盲區, 那就先維持1.5階直到收到下一個辨識為止。
+                    // 動作：把下面整段 Mark 掉
+                    // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
+                    //if (((BearLeft + BearRight) / 2 <= 0) || ((BearLeft + BearRight) / 2 >= 960))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode0);
+
+                    //    return;
+                    //}
+
+                    // 熊在廊道，回到 Mode0
+                    if (majorMethod.LiveButton_OldValue[8] == true)
                         SetScreenMode(ModeKind.Mode0);
 
-                        return;
+                    // 四個模式，平行轉換系列
+                    switch (bearMode)
+                    {
+                        // 站立系列
+                        case "stand":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A20_1);
+                            break;
+
+                        // 趴臥系列
+                        case "lie":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A30_1);
+                            break;
+
+                        // 四足系列
+                        case "walk":
+                            //spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            // 原來是這樣，就不用轉換
+                            //SetScreenMode(ModeKind.Mode15_A40_1);
+                            break;
+
+                        // 坐 系列
+                        case "sit":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A50_1);
+                            break;
                     }
 
                     // 在此顯示 AR 框
-                    ImageBrush imgb_ar_a42 = new();
-                    imgb_ar_a42.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_22_1_AR.png", UriKind.RelativeOrAbsolute));
-                    spnlMode3A42_A_AR.Background = imgb_ar_a42;
+                    if (majorMethod.imgb_ar_a42 == null)
+                    {
+                        majorMethod.imgb_ar_a42 = new();
+                        majorMethod.imgb_ar_a42.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_AR_walk.png", UriKind.RelativeOrAbsolute));
+                    }
+                    spnlMode3A42_A_AR.Background = majorMethod.imgb_ar_a42;
 
                     // 設定左上與寬高
-                    Canvas.SetLeft(spnlMode3A42_A_AR, BearLeft);
-                    Canvas.SetTop(spnlMode3A42_A_AR, BearTop);
-                    spnlMode3A42_A_AR.Width = BearRight - BearLeft;
-                    spnlMode3A42_A_AR.Height = BearBottom - BearTop;
+                    //Canvas.SetLeft(spnlMode3A42_A_AR, BearLeft);
+                    //Canvas.SetTop(spnlMode3A42_A_AR, BearTop);
+                    //spnlMode3A42_A_AR.Width = BearRight - BearLeft;
+                    //spnlMode3A42_A_AR.Height = BearBottom - BearTop;
+
+                    // 當 ScreenMode 為 0 或 -1 時，就不用計算 AR 中心值
+                    if (bearObject.ScreenMode == "1")
+                    {
+                        // 即時 AR
+                        ARLeft = (int)((BearLeft + BearRight) / 2) - 233;
+                        ARTop = (int)((BearTop + BearBottom) / 2) - 203;
+
+                        majorMethod.ARLeft_OldValue = ARLeft;
+                        majorMethod.ARRight_OldValue = ARTop;
+
+                        // 畫面沒有被凍住，數值歸零
+                        majorMethod.HaveFix = false;
+                        majorMethod.Mode15FixHeight = 0.0;
+                        majorMethod.Mode15FixDegree = 0.0;
+                    }
+                    else
+                    {
+                        // 當第一次要被凍住時，取得角度和高度
+                        if (majorMethod.HaveFix == false)
+                        {
+                            majorMethod.HaveFix = true;
+                            majorMethod.Mode15FixHeight = majorMethod.machineHeight;
+                            majorMethod.Mode15FixDegree = majorMethod.machineDegree;
+                        }
+
+                        // 取 Old Value 加高度角度旋轉值
+                        // 水平旋轉 : -2.58 * (當前旋轉角度 - 最後有效位置旋轉角度) + 最後有效位置X點位
+                        // 升降垂直: -0.11 * (當前升降高度 - 最後有效位置高度) + 最後有效高度Y點位
+                        ARLeft = majorMethod.ARLeft_OldValue + (int)((majorMethod.machineDegree - majorMethod.Mode15FixDegree) * (-2.58));
+                        ARTop = majorMethod.ARRight_OldValue + (int)((majorMethod.machineHeight - majorMethod.Mode15FixHeight) * (-0.11));
+                    }
+
+                    if (spnlMode3A42_A_AR.Visibility == Visibility.Visible)
+                    {
+                        MoveImageByAnimation(spnlMode3A42_A_AR, ARLeft, ARTop);
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(spnlMode3A42_A_AR, ARLeft);
+                        Canvas.SetTop(spnlMode3A42_A_AR, ARTop);
+                    }
 
                     spnlMode3A42_A_AR.Visibility = Visibility.Visible;
 
@@ -510,25 +839,124 @@ namespace ANB_SSZ.Module_UI
                 // 坐 系列
                 case ModeKind.Mode15_A50_1:
 
+                    // 取消 ==> 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
+                    // 2024/12/13
+                    // 如果1.5階時, 突然全部相機都辨識不到, 也不再盲區, 那就先維持1.5階直到收到下一個辨識為止。
+                    // 動作：把下面整段 Mark 掉
                     // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if (((BearLeft + BearRight) / 2 <= 240) || ((BearLeft + BearRight) / 2 >= 720))
-                    {
+                    //if (((BearLeft + BearRight) / 2 <= 0) || ((BearLeft + BearRight) / 2 >= 960))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode0);
+
+                    //    return;
+                    //}
+
+                    // 熊在廊道，回到 Mode0
+                    if (majorMethod.LiveButton_OldValue[8] == true)
                         SetScreenMode(ModeKind.Mode0);
 
-                        return;
+                    // 四個模式，平行轉換系列
+                    switch (bearMode)
+                    {
+                        // 站立系列
+                        case "stand":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A20_1);
+                            break;
+
+                        // 趴臥系列
+                        case "lie":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A30_1);
+                            break;
+
+                        // 四足系列
+                        case "walk":
+                            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            SetScreenMode(ModeKind.Mode15_A40_1);
+                            break;
+
+                        // 坐 系列
+                        case "sit":
+                            //spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
+                            //spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
+
+                            // 原來是這樣，就不用轉換
+                            //SetScreenMode(ModeKind.Mode15_A50_1);
+                            break;
                     }
 
                     // 在此顯示 AR 框
-                    ImageBrush imgb_ar_a52 = new();
-                    imgb_ar_a52.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_22_1_AR.png", UriKind.RelativeOrAbsolute));
-                    spnlMode3A52_A_AR.Background = imgb_ar_a52;
+                    if (majorMethod.imgb_ar_a52 == null)
+                    {
+                        majorMethod.imgb_ar_a52 = new();
+                        majorMethod.imgb_ar_a52.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_AR_sit.png", UriKind.RelativeOrAbsolute));
+                    }
+                    spnlMode3A52_A_AR.Background = majorMethod.imgb_ar_a52;
 
                     // 設定左上與寬高
-                    Canvas.SetLeft(spnlMode3A52_A_AR, BearLeft);
-                    Canvas.SetTop(spnlMode3A52_A_AR, BearTop);
-                    spnlMode3A52_A_AR.Width = BearRight - BearLeft;
-                    spnlMode3A52_A_AR.Height = BearBottom - BearTop;
+                    //Canvas.SetLeft(spnlMode3A52_A_AR, BearLeft);
+                    //Canvas.SetTop(spnlMode3A52_A_AR, BearTop);
+                    //spnlMode3A52_A_AR.Width = BearRight - BearLeft;
+                    //spnlMode3A52_A_AR.Height = BearBottom - BearTop;
 
+                    // 當 ScreenMode 為 0 或 -1 時，就不用計算 AR 中心值
+                    if (bearObject.ScreenMode == "1")
+                    {
+                        // 即時 AR
+                        ARLeft = (int)((BearLeft + BearRight) / 2) - 233;
+                        ARTop = (int)((BearTop + BearBottom) / 2) - 203;
+
+                        majorMethod.ARLeft_OldValue = ARLeft;
+                        majorMethod.ARRight_OldValue = ARTop;
+
+                        // 畫面沒有被凍住，數值歸零
+                        majorMethod.HaveFix = false;
+                        majorMethod.Mode15FixHeight = 0.0;
+                        majorMethod.Mode15FixDegree = 0.0;
+                    }
+                    else
+                    {
+                        // 當第一次要被凍住時，取得角度和高度
+                        if (majorMethod.HaveFix == false)
+                        {
+                            majorMethod.HaveFix = true;
+                            majorMethod.Mode15FixHeight = majorMethod.machineHeight;
+                            majorMethod.Mode15FixDegree = majorMethod.machineDegree;
+                        }
+
+                        // 取 Old Value 加高度角度旋轉值
+                        // 水平旋轉 : -2.58 * (當前旋轉角度 - 最後有效位置旋轉角度) + 最後有效位置X點位
+                        // 升降垂直: -0.11 * (當前升降高度 - 最後有效位置高度) + 最後有效高度Y點位
+                        ARLeft = majorMethod.ARLeft_OldValue + (int)((majorMethod.machineDegree - majorMethod.Mode15FixDegree) * (-2.58));
+                        ARTop = majorMethod.ARRight_OldValue + (int)((majorMethod.machineHeight - majorMethod.Mode15FixHeight) * (-0.11));
+                    }
+
+                    if (spnlMode3A52_A_AR.Visibility == Visibility.Visible)
+                    {
+                        MoveImageByAnimation(spnlMode3A52_A_AR, ARLeft, ARTop);
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(spnlMode3A52_A_AR, ARLeft);
+                        Canvas.SetTop(spnlMode3A52_A_AR, ARTop);
+                    }
+
+                    // 最後才開啟顯示
                     spnlMode3A52_A_AR.Visibility = Visibility.Visible;
 
                     break;
@@ -555,15 +983,15 @@ namespace ANB_SSZ.Module_UI
                 case ModeKind.Mode15_B10:
 
                     // 當熊在兩側時，螢幕切換到 ZOO_A_10 的狀態
-                    if ((BearCenter <= 240) && (BearCenter >=0) || ((BearCenter >= 720) && (BearCenter <= 960)))
-                    {
-                        SetScreenMode(ModeKind.Mode1);
+                    //if ((BearCenter <= 240) && (BearCenter >=0) || ((BearCenter >= 720) && (BearCenter <= 960)))
+                    //{
+                    //    SetScreenMode(ModeKind.Mode1);
 
-                        return;
-                    }
+                    //    return;
+                    //}
 
                     // 當熊在螢幕中心時，依照姿勢，切換到不同的 站立，趴臥，四足
-                    if (((BearLeft + BearRight) / 2 >= 240) && ((BearLeft + BearRight) / 2 <= 720))
+                    if (((BearLeft + BearRight) / 2 >= 0) && ((BearLeft + BearRight) / 2 <= 960))
                     {
                         switch (bearMode)
                         {
@@ -581,7 +1009,7 @@ namespace ANB_SSZ.Module_UI
                             case "walk":
                                 SetScreenMode(ModeKind.Mode15_A40_1);
                                 break;
-                            
+
                             // 坐 系列
                             case "sit":
                                 SetScreenMode(ModeKind.Mode15_A50_1);
@@ -596,18 +1024,28 @@ namespace ANB_SSZ.Module_UI
                         if (IsModeSP_01 == true)
                         {
                             // 加上多國語言
-                            ImageBrush imgb_sp01 = new();
-
                             if (languageModel == LanguageMode.Chinese)
                             {
-                                imgb_sp01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_01.png", UriKind.RelativeOrAbsolute));
+                                if (majorMethod.imgb_sp01_c == null)
+                                {
+                                    majorMethod.imgb_sp01_c = new();
+                                    majorMethod.imgb_sp01_c.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_01.png", UriKind.RelativeOrAbsolute));
+                                }
+
+                                majorMethod.imgb_sp01 = majorMethod.imgb_sp01_c;
                             }
                             else
                             {
-                                imgb_sp01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_01.png", UriKind.RelativeOrAbsolute));
+                                if (majorMethod.imgb_sp01_e == null)
+                                {
+                                    majorMethod.imgb_sp01_e = new();
+                                    majorMethod.imgb_sp01_e.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_01.png", UriKind.RelativeOrAbsolute));
+                                }
+
+                                majorMethod.imgb_sp01 = majorMethod.imgb_sp01_e;
                             }
 
-                            spnlModeSP_01.Background = imgb_sp01;
+                            spnlModeSP_01.Background = majorMethod.imgb_sp01;
                             spnlModeSP_01.Visibility = Visibility.Visible;
                         }
                         else
@@ -703,6 +1141,14 @@ namespace ANB_SSZ.Module_UI
 
                     break;
 
+                case ModeKind.ModeSP_08:
+
+                    // 熊在廊道，或是 ScreenMode == 1 時，回到 Mode0 取消盲區
+                    if ((BearInCamera9() == true) || (bearObject.ScreenMode == "1"))
+                        SetScreenMode(ModeKind.Mode0);
+
+                    break;
+
                 case ModeKind.ModeSP_09:
 
                     // 熊在廊道，或是 ScreenMode == 1 時，回到 Mode0 取消盲區
@@ -734,6 +1180,14 @@ namespace ANB_SSZ.Module_UI
                         SetScreenMode(ModeKind.Mode0);
 
                     break;
+
+                case ModeKind.ModeSP_13:
+
+                    // 熊在廊道，或是 ScreenMode == 1 時，回到 Mode0 取消盲區
+                    if ((BearInCamera9() == true) || (bearObject.ScreenMode == "1"))
+                        SetScreenMode(ModeKind.Mode0);
+
+                    break;
             }
         }
 
@@ -743,6 +1197,21 @@ namespace ANB_SSZ.Module_UI
             dynamic cameraData = bearObject.DataArray[11];
 
             if ((cameraData != null) && (cameraData[0] >= majorMethod.confThresholdList[8]))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // 判斷熊是否在某隻相機中
+        public bool BearInCamera(int index)
+        {
+            dynamic cameraData = bearObject.DataArray[3 + index];
+
+            if ((cameraData != null) && (cameraData[0] >= majorMethod.confThresholdList[index]))
             {
                 return true;
             }
@@ -778,6 +1247,9 @@ namespace ANB_SSZ.Module_UI
             // No7
             CheckModeSP_07();
 
+            // No8
+            CheckModeSP_08();
+
             // No9
             CheckModeSP_09();
 
@@ -789,6 +1261,9 @@ namespace ANB_SSZ.Module_UI
 
             // No12
             CheckModeSP_12();
+
+            // No13 - 水池
+            CheckModeSP_13();
         }
 
         // 盲區判斷程式 SP01
@@ -803,7 +1278,8 @@ namespace ANB_SSZ.Module_UI
             }
 
             // Cam9 有抓到熊
-            if (cam9Conf >= majorMethod.confThresholdList[8])
+            //if (cam9Conf >= majorMethod.confThresholdList[8])
+            if (majorMethod.LiveButton_OldValue[8] == true)
             {
                 IsModeSP_01 = true;
             }
@@ -872,7 +1348,7 @@ namespace ANB_SSZ.Module_UI
 
                 // 做一下 Log 紀錄
                 TextLog.WriteLog($"盲區 4 啟動(3 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
-                
+
                 return;
             }
 
@@ -1017,20 +1493,56 @@ namespace ANB_SSZ.Module_UI
         // 盲區判斷程式 SP07
         public void CheckModeSP_07()
         {
-            // 和 No4 類似
-            // 3 號攝影機的信心值，超過特定值(個別參數設定，目前設定 0.6)。
+            // 左邊牆後
+            // Cam6, Cam8
+
+            // 取得 6 號相機的 BBox 中心點
+            List<double> Cam6Center = GetCamCordCenter(5);
+
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam6Center[0] >= 0.6) && (Cam6Center[0] <= 0.9) && (Cam6Center[1] >= 0.0) && (Cam6Center[1] <= 0.3))
+            {
+                // 顯示盲區 8
+                SetScreenMode(ModeKind.ModeSP_07);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 7 啟動(6 號相機): XCenter={Cam6Center[0]}, YCenter={Cam6Center[1]}");
+
+                return;
+            }
+
+            // 取得 8 號相機的 BBox 中心點
+            List<double> Cam8Center = GetCamCordCenter(7);
+
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam6Center[0] >= 0.0) && (Cam6Center[0] <= 0.2) && (Cam6Center[1] >= 0.2) && (Cam6Center[1] <= 0.5))
+            {
+                // 顯示盲區 8
+                SetScreenMode(ModeKind.ModeSP_07);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 7 啟動(6 號相機): XCenter={Cam6Center[0]}, YCenter={Cam6Center[1]}");
+
+                return;
+            }
+        }
+
+        // 盲區判斷程式 SP08
+        public void CheckModeSP_08()
+        {
+            // 柱子後 - 右邊
 
             // 取得 3 號相機的 BBox 中心點
             List<double> Cam3Center = GetCamCordCenter(2);
 
-            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No4 盲區
-            if ((Cam3Center[0] >= 0.2) && (Cam3Center[0] <= 0.4) && (Cam3Center[1] >= 0.0) && (Cam3Center[1] <= 0.1))
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動
+            if ((Cam3Center[0] >= 0.2) && (Cam3Center[0] <= 0.4) && (Cam3Center[1] >= 0.1) && (Cam3Center[1] <= 0.3))
             {
-                // 顯示盲區 7
-                SetScreenMode(ModeKind.ModeSP_07);
+                // 顯示盲區 
+                SetScreenMode(ModeKind.ModeSP_08);
 
                 // 做一下 Log 紀錄
-                TextLog.WriteLog($"盲區 7 啟動(3 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
+                TextLog.WriteLog($"盲區 8 啟動(3 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
 
                 return;
             }
@@ -1038,14 +1550,14 @@ namespace ANB_SSZ.Module_UI
             // 取得 4 號相機的 BBox 中心點
             List<double> Cam4Center = GetCamCordCenter(3);
 
-            // 如果熊中心點在 X(0~0.2) 與 Y(0~0.1) 間，就啟動 No4 盲區(By Cam4)
-            if ((Cam4Center[0] >= 0.0) && (Cam4Center[0] <= 0.2) && (Cam4Center[1] >= 0.0) && (Cam4Center[1] <= 0.1))
+            // 如果熊中心點在 X(0~0.2) 與 Y(0~0.1) 間，就啟動盲區(By Cam4)
+            if ((Cam4Center[0] >= 0.0) && (Cam4Center[0] <= 0.2) && (Cam4Center[1] >= 0.1) && (Cam4Center[1] <= 0.3))
             {
                 // 顯示盲區 7
-                SetScreenMode(ModeKind.ModeSP_07);
+                SetScreenMode(ModeKind.ModeSP_08);
 
                 // 做一下 Log 紀錄
-                TextLog.WriteLog($"盲區 7 啟動(4 號相機): XCenter={Cam4Center[0]}, YCenter={Cam4Center[0]}");
+                TextLog.WriteLog($"盲區 8 啟動(4 號相機): XCenter={Cam4Center[0]}, YCenter={Cam4Center[0]}");
 
                 return;
             }
@@ -1054,29 +1566,141 @@ namespace ANB_SSZ.Module_UI
         // 盲區判斷程式 SP09
         public void CheckModeSP_09()
         {
+            // 取得 3 號相機的 BBox 中心點
+            List<double> Cam3Center = GetCamCordCenter(2);
 
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam3Center[0] >= 0.8) && (Cam3Center[0] <= 1.0) && (Cam3Center[1] >= 0.25) && (Cam3Center[1] <= 0.6))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_09);
 
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(3 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
+
+                return;
+            }
+
+            // 取得 4 號相機的 BBox 中心點
+            List<double> Cam4Center = GetCamCordCenter(3);
+
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam3Center[0] >= 0.8) && (Cam3Center[0] <= 0.9) && (Cam3Center[1] >= 0.1) && (Cam3Center[1] <= 0.55))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_09);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(4 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
+
+                return;
+            }
         }
 
-        // 盲區判斷程式 SP09
+        // 盲區判斷程式 SP10
         public void CheckModeSP_10()
         {
+            // 取得 3 號相機的 BBox 中心點
+            List<double> Cam3Center = GetCamCordCenter(2);
 
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam3Center[0] >= 0.8) && (Cam3Center[0] <= 1.0) && (Cam3Center[1] >= 0.25) && (Cam3Center[1] <= 0.6))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_10);
 
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(3 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
+
+                return;
+            }
+
+            // 取得 4 號相機的 BBox 中心點
+            List<double> Cam4Center = GetCamCordCenter(3);
+
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam3Center[0] >= 0.8) && (Cam3Center[0] <= 0.9) && (Cam3Center[1] >= 0.1) && (Cam3Center[1] <= 0.55))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_10);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(4 號相機): XCenter={Cam3Center[0]}, YCenter={Cam3Center[1]}");
+
+                return;
+            }
         }
 
         // 盲區判斷程式 SP11
         public void CheckModeSP_11()
         {
+            // 取得 5 號相機的 BBox 中心點
+            List<double> Cam5Center = GetCamCordCenter(4);
 
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam5Center[0] >= 0.0) && (Cam5Center[0] <= 0.3) && (Cam5Center[1] >= 0.2) && (Cam5Center[1] <= 0.5))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_11);
 
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(3 號相機): XCenter={Cam5Center[0]}, YCenter={Cam5Center[1]}");
+
+                return;
+            }
         }
 
         // 盲區判斷程式 SP12
         public void CheckModeSP_12()
         {
+            // 取得 5 號相機的 BBox 中心點
+            List<double> Cam5Center = GetCamCordCenter(4);
 
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No8 盲區
+            if ((Cam5Center[0] >= 0.0) && (Cam5Center[0] <= 0.3) && (Cam5Center[1] >= 0.2) && (Cam5Center[1] <= 0.5))
+            {
+                // 顯示盲區 9
+                SetScreenMode(ModeKind.ModeSP_11);
 
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 9 啟動(3 號相機): XCenter={Cam5Center[0]}, YCenter={Cam5Center[1]}");
+
+                return;
+            }
+        }
+
+        // 盲區判斷程式 SP13 - 水池
+        public void CheckModeSP_13()
+        {
+            // 水池是看 1 和 8 號相機
+            // 取得 1 號相機的 BBox 中心點
+            List<double> Cam1Center = GetCamCordCenter(0);
+
+            // 如果熊中心點在 X(0.2~0.4) 與 Y(0~0.1) 間，就啟動 No13 盲區
+            if ((Cam1Center[0] >= 0.4) && (Cam1Center[0] <= 0.7) && (Cam1Center[1] >= 0.5) && (Cam1Center[1] <= 0.9))
+            {
+                // 顯示盲區 13
+                SetScreenMode(ModeKind.ModeSP_13);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 13 啟動(1 號相機): XCenter={Cam1Center[0]}, YCenter={Cam1Center[1]}");
+
+                return;
+            }
+
+            // 取得 8 號相機的 BBox 中心點
+            List<double> Cam8Center = GetCamCordCenter(7);
+
+            if ((Cam8Center[0] >= 0.7) && (Cam8Center[0] <= 0.9) && (Cam8Center[1] >= 0.8) && (Cam8Center[1] <= 1.0))
+            {
+                // 顯示盲區 13
+                SetScreenMode(ModeKind.ModeSP_13);
+
+                // 做一下 Log 紀錄
+                TextLog.WriteLog($"盲區 13 啟動(8 號相機): XCenter={Cam8Center[0]}, YCenter={Cam8Center[1]}");
+
+                return;
+            }
         }
 
         // 取得 CamIndex 號相機(1號相機的 Index=0, 2號相機的 Index=1...)的 BBox 中心值
@@ -1098,7 +1722,7 @@ namespace ANB_SSZ.Module_UI
             // 若信心值是 -9999，代表沒有偵測到
             if (camConf == -9999.0)
             {
-                return new List<double>{ -1.0, -1.0 };
+                return new List<double> { -1.0, -1.0 };
             }
 
             // 若信心值太低，就沒偵測到
@@ -1166,90 +1790,226 @@ namespace ANB_SSZ.Module_UI
             PosX = bearObject.AreaEgg[0].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[0].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_0 = new();
-            imgb_Egg_0.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon0.Background = imgb_Egg_0;
+            if (majorMethod.imgb_Egg_0 == null)
+            {
+                majorMethod.imgb_Egg_0 = new();
+                majorMethod.imgb_Egg_0.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon0.Background = majorMethod.imgb_Egg_0;
 
-            Canvas.SetLeft(spnlB10Icon0, PosX);
-            Canvas.SetTop(spnlB10Icon0, PosY);
+            //Canvas.SetLeft(spnlB10Icon0, PosX);
+            //Canvas.SetTop(spnlB10Icon0, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon0, PosX, PosY);
 
             // Egg_1
             PosX = bearObject.AreaEgg[1].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[1].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_1 = new();
-            imgb_Egg_1.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon1.Background = imgb_Egg_1;
+            if (majorMethod.imgb_Egg_1 == null)
+            {
+                majorMethod.imgb_Egg_1 = new();
+                majorMethod.imgb_Egg_1.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon1.Background = majorMethod.imgb_Egg_1;
 
-            Canvas.SetLeft(spnlB10Icon1, PosX);
-            Canvas.SetTop(spnlB10Icon1, PosY);
+            //Canvas.SetLeft(spnlB10Icon1, PosX);
+            //Canvas.SetTop(spnlB10Icon1, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon1, PosX, PosY);
 
             // Egg_2
             PosX = bearObject.AreaEgg[2].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[2].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_2 = new();
-            imgb_Egg_2.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon2.Background = imgb_Egg_2;
+            if (majorMethod.imgb_Egg_2 == null)
+            {
+                majorMethod.imgb_Egg_2 = new();
+                majorMethod.imgb_Egg_2.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon2.Background = majorMethod.imgb_Egg_2;
 
-            Canvas.SetLeft(spnlB10Icon2, PosX);
-            Canvas.SetTop(spnlB10Icon2, PosY);
+            //Canvas.SetLeft(spnlB10Icon2, PosX);
+            //Canvas.SetTop(spnlB10Icon2, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon2, PosX, PosY);
 
             // Egg_3
             PosX = bearObject.AreaEgg[3].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[3].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_3 = new();
-            imgb_Egg_3.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon3.Background = imgb_Egg_3;
+            if (majorMethod.imgb_Egg_3 == null)
+            {
+                majorMethod.imgb_Egg_3 = new();
+                majorMethod.imgb_Egg_3.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon3.Background = majorMethod.imgb_Egg_3;
 
-            Canvas.SetLeft(spnlB10Icon3, PosX);
-            Canvas.SetTop(spnlB10Icon3, PosY);
+            //Canvas.SetLeft(spnlB10Icon3, PosX);
+            //Canvas.SetTop(spnlB10Icon3, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon3, PosX, PosY);
 
             // Egg_4
             PosX = bearObject.AreaEgg[4].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[4].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_4 = new();
-            imgb_Egg_4.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon4.Background = imgb_Egg_4;
+            if (majorMethod.imgb_Egg_4 == null)
+            {
+                majorMethod.imgb_Egg_4 = new();
+                majorMethod.imgb_Egg_4.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon4.Background = majorMethod.imgb_Egg_4;
 
-            Canvas.SetLeft(spnlB10Icon4, PosX);
-            Canvas.SetTop(spnlB10Icon4, PosY);
+            //Canvas.SetLeft(spnlB10Icon4, PosX);
+            //Canvas.SetTop(spnlB10Icon4, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon4, PosX, PosY);
 
             // Egg_5
             PosX = bearObject.AreaEgg[5].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[5].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_5 = new();
-            imgb_Egg_5.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon5.Background = imgb_Egg_5;
+            if (majorMethod.imgb_Egg_5 == null)
+            {
+                majorMethod.imgb_Egg_5 = new();
+                majorMethod.imgb_Egg_5.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon5.Background = majorMethod.imgb_Egg_5;
 
-            Canvas.SetLeft(spnlB10Icon5, PosX);
-            Canvas.SetTop(spnlB10Icon5, PosY);
+            //Canvas.SetLeft(spnlB10Icon5, PosX);
+            //Canvas.SetTop(spnlB10Icon5, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon5, PosX, PosY);
 
             // Egg_6
             PosX = bearObject.AreaEgg[6].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[6].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_6 = new();
-            imgb_Egg_6.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon6.Background = imgb_Egg_6;
+            if (majorMethod.imgb_Egg_6 == null)
+            {
+                majorMethod.imgb_Egg_6 = new();
+                majorMethod.imgb_Egg_6.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon6.Background = majorMethod.imgb_Egg_6;
 
-            Canvas.SetLeft(spnlB10Icon6, PosX);
-            Canvas.SetTop(spnlB10Icon6, PosY);
+            //Canvas.SetLeft(spnlB10Icon6, PosX);
+            //Canvas.SetTop(spnlB10Icon6, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon6, PosX, PosY);
 
             // Egg_7
             PosX = bearObject.AreaEgg[7].PositionXY[0] - ScreenLeft;
             PosY = bearObject.AreaEgg[7].PositionXY[1] - ScreenTop;
 
-            ImageBrush imgb_Egg_7 = new();
-            imgb_Egg_7.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
-            spnlB10Icon7.Background = imgb_Egg_7;
+            if (majorMethod.imgb_Egg_7 == null)
+            {
+                majorMethod.imgb_Egg_7 = new();
+                majorMethod.imgb_Egg_7.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_10_icon.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlB10Icon7.Background = majorMethod.imgb_Egg_7;
 
-            Canvas.SetLeft(spnlB10Icon7, PosX);
-            Canvas.SetTop(spnlB10Icon7, PosY);
+            //Canvas.SetLeft(spnlB10Icon7, PosX);
+            //Canvas.SetTop(spnlB10Icon7, PosY);
+            // 平滑動畫
+            MoveImageByAnimation(spnlB10Icon7, PosX, PosY);
 
+            // 定位點
+            // 近點，絕對座標
+            // Egg_91
+            /* 1112 Mark
+            PosX = bearObject.AreaEgg[8].PositionXY[0] - ScreenLeft;
+            PosY = bearObject.AreaEgg[8].PositionXY[1] - ScreenTop;
+
+            ImageBrush imgb_Egg_8 = new();
+            imgb_Egg_8.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-white.png", UriKind.RelativeOrAbsolute));
+            spnlB10Icon8.Background = imgb_Egg_8;
+
+            Canvas.SetLeft(spnlB10Icon8, PosX);
+            Canvas.SetTop(spnlB10Icon8, PosY);
+            */
+
+            // Egg_92
+            //PosX = bearObject.AreaEgg[9].PositionXY[0] - ScreenLeft;
+            //PosY = bearObject.AreaEgg[9].PositionXY[1] - ScreenTop;
+
+            //ImageBrush imgb_Egg_9 = new();
+            //imgb_Egg_9.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-white.png", UriKind.RelativeOrAbsolute));
+            //spnlB10Icon9.Background = imgb_Egg_9;
+
+            //Canvas.SetLeft(spnlB10Icon9, PosX);
+            //Canvas.SetTop(spnlB10Icon9, PosY);
+
+            // Egg_93
+            //PosX = bearObject.AreaEgg[10].PositionXY[0] - ScreenLeft;
+            //PosY = bearObject.AreaEgg[10].PositionXY[1] - ScreenTop;
+
+            //ImageBrush imgb_Egg_10 = new();
+            //imgb_Egg_10.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin.png", UriKind.RelativeOrAbsolute));
+            //spnlB10Icon10.Background = imgb_Egg_10;
+
+            //Canvas.SetLeft(spnlB10Icon10, PosX);
+            //Canvas.SetTop(spnlB10Icon10, PosY);
+
+            /* 1112 Mark
+            // Egg_94
+            PosX = bearObject.AreaEgg[11].PositionXY[0] - ScreenLeft;
+            PosY = bearObject.AreaEgg[11].PositionXY[1] - ScreenTop;
+
+            ImageBrush imgb_Egg_11 = new();
+            imgb_Egg_11.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-white.png", UriKind.RelativeOrAbsolute));
+            spnlB10Icon11.Background = imgb_Egg_11;
+
+            Canvas.SetLeft(spnlB10Icon11, PosX);
+            Canvas.SetTop(spnlB10Icon11, PosY);
+            */
+
+            // 遠點，絕對座標
+            // Egg_96
+            //PosX = bearObject.AreaEgg[12].PositionXY[0] - ScreenLeft;
+            //PosY = bearObject.AreaEgg[12].PositionXY[1] - ScreenTop;
+
+            //ImageBrush imgb_Egg_12 = new();
+            //imgb_Egg_12.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-yellow.png", UriKind.RelativeOrAbsolute));
+            //spnlB10Icon12.Background = imgb_Egg_12;
+
+            //Canvas.SetLeft(spnlB10Icon12, PosX);
+            //Canvas.SetTop(spnlB10Icon12, PosY);
+
+            // Egg_97
+            //PosX = bearObject.AreaEgg[13].PositionXY[0] - ScreenLeft;
+            //PosY = bearObject.AreaEgg[13].PositionXY[1] - ScreenTop;
+
+            //ImageBrush imgb_Egg_13 = new();
+            //imgb_Egg_13.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-yellow.png", UriKind.RelativeOrAbsolute));
+            //spnlB10Icon13.Background = imgb_Egg_13;
+
+            //Canvas.SetLeft(spnlB10Icon13, PosX);
+            //Canvas.SetTop(spnlB10Icon13, PosY);
+
+            /* 1112 Mark
+            // Egg_98
+            PosX = bearObject.AreaEgg[14].PositionXY[0] - ScreenLeft;
+            PosY = bearObject.AreaEgg[14].PositionXY[1] - ScreenTop;
+
+            ImageBrush imgb_Egg_14 = new();
+            imgb_Egg_14.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-white.png", UriKind.RelativeOrAbsolute));
+            spnlB10Icon14.Background = imgb_Egg_14;
+
+            Canvas.SetLeft(spnlB10Icon14, PosX);
+            Canvas.SetTop(spnlB10Icon14, PosY);
+            */
+
+            // Egg_99
+            //PosX = bearObject.AreaEgg[15].PositionXY[0] - ScreenLeft;
+            //PosY = bearObject.AreaEgg[15].PositionXY[1] - ScreenTop;
+
+            //ImageBrush imgb_Egg_15 = new();
+            //imgb_Egg_15.ImageSource = new BitmapImage(new Uri(".\\Image\\location-pin-white.png", UriKind.RelativeOrAbsolute));
+            //spnlB10Icon15.Background = imgb_Egg_14;
+
+            //Canvas.SetLeft(spnlB10Icon15, PosX);
+            //Canvas.SetTop(spnlB10Icon15, PosY);
         }
 
         public void drawMapIcon()
@@ -1263,43 +2023,67 @@ namespace ANB_SSZ.Module_UI
             else
             {
                 // 加上多國語言
-                ImageBrush imgb_map_button = new();
+                // ImageBrush imgb_map_button = new();
 
                 if (languageModel == LanguageMode.Chinese)
                 {
-                    imgb_map_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_map_10_icon.png", UriKind.RelativeOrAbsolute));
+                    if (majorMethod.imgb_map_button_c == null)
+                    {
+                        majorMethod.imgb_map_button_c = new();
+                        majorMethod.imgb_map_button_c.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_map_10_icon.png", UriKind.RelativeOrAbsolute));
+                    }
+                    majorMethod.imgb_map_button = majorMethod.imgb_map_button_c;
                 }
                 else
                 {
-                    imgb_map_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_map_10_icon.png", UriKind.RelativeOrAbsolute));
+                    if (majorMethod.imgb_map_button_e == null)
+                    {
+                        majorMethod.imgb_map_button_e = new();
+                        majorMethod.imgb_map_button_e.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_map_10_icon.png", UriKind.RelativeOrAbsolute));
+                    }
+                    majorMethod.imgb_map_button = majorMethod.imgb_map_button_e;
                 }
 
-                spnlMapIcon.Background = imgb_map_button;
-                spnlMapIcon.Visibility = Visibility.Visible;
-
-                // 2024/12/05 直接指定位置
-                Canvas.SetLeft(spnlMapIcon, majorMethod.MapBearIconX);
-                Canvas.SetTop(spnlMapIcon, majorMethod.MapBearIconY);
+                // Old 的部分
+                //spnlMapIcon.Background = imgb_map_button;
+                //spnlMapIcon.Visibility = Visibility.Visible;
 
                 //// 設定動畫移動
                 //MoveImageByAnimation(spnlMapIcon, majorMethod.MapBearIconX, majorMethod.MapBearIconY);
+
+                // 2024/12/14 待測
+                if (spnlMapIcon.Visibility == Visibility.Visible)
+                {
+                    // 設定動畫移動
+                    MoveImageByAnimation(spnlMapIcon, majorMethod.MapBearIconX, majorMethod.MapBearIconY);
+                }
+                else
+                {
+                    // 2024/12/05 Visible 前，先移動直接指定位置
+                    Canvas.SetLeft(spnlMapIcon, majorMethod.MapBearIconX);
+                    Canvas.SetTop(spnlMapIcon, majorMethod.MapBearIconY);
+
+                    spnlMapIcon.Background = majorMethod.imgb_map_button;
+                    spnlMapIcon.Visibility = Visibility.Visible;
+                }
             }
+        }
+
+        public void clearLiveCamButtonIcon()
+        {
+            spnlLiveBtn0.Background = null;
+            spnlLiveBtn1.Background = null;
+            spnlLiveBtn2.Background = null;
+            spnlLiveBtn3.Background = null;
+            spnlLiveBtn4.Background = null;
+            spnlLiveBtn5.Background = null;
+            spnlLiveBtn6.Background = null;
+            spnlLiveBtn7.Background = null;
+            spnlLiveBtn8.Background = null;
         }
 
         public void drawLiveCamButton()
         {
-            // 若第一支攝影機是放映者
-            // 加入時間阻尼，當還沒到啟動時間，就返回
-            //if ((DateTime.Now - majorMethod.LiveButtonTime_01) >= MajorMethod.LiveButtonTimeSpan)
-            //{
-
-
-
-            //    // 儲存更新時間
-            //    majorMethod.LiveButtonTime_01 = DateTime.Now;
-            //}
-
-
             // spnlLiveBtn0 --------------------------------
             dynamic cameraData = bearObject.DataArray[3];
 
@@ -1310,7 +2094,8 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 0)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    // if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[0] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_31.png", UriKind.RelativeOrAbsolute));
@@ -1327,7 +2112,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[0] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_21.png", UriKind.RelativeOrAbsolute));
@@ -1355,7 +2140,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 1)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[1] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_32.png", UriKind.RelativeOrAbsolute));
@@ -1372,7 +2157,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[1] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_22.png", UriKind.RelativeOrAbsolute));
@@ -1400,7 +2185,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 2)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[2] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_33.png", UriKind.RelativeOrAbsolute));
@@ -1417,7 +2202,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[2] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_23.png", UriKind.RelativeOrAbsolute));
@@ -1445,7 +2230,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 3)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[3] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_34.png", UriKind.RelativeOrAbsolute));
@@ -1462,7 +2247,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[3] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_24.png", UriKind.RelativeOrAbsolute));
@@ -1490,7 +2275,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 4)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[4] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_35.png", UriKind.RelativeOrAbsolute));
@@ -1507,7 +2292,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[4] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_25.png", UriKind.RelativeOrAbsolute));
@@ -1535,7 +2320,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 5)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[5] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_36.png", UriKind.RelativeOrAbsolute));
@@ -1552,7 +2337,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[5] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_26.png", UriKind.RelativeOrAbsolute));
@@ -1580,7 +2365,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 6)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[6] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_37.png", UriKind.RelativeOrAbsolute));
@@ -1597,7 +2382,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[6] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_27.png", UriKind.RelativeOrAbsolute));
@@ -1625,7 +2410,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 7)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[7] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_38.png", UriKind.RelativeOrAbsolute));
@@ -1642,7 +2427,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[7] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_28.png", UriKind.RelativeOrAbsolute));
@@ -1670,7 +2455,7 @@ namespace ANB_SSZ.Module_UI
                 if (liveCamIndex == 8)
                 {
                     // 當第一支攝影機有熊，就放有熊且放映的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[8] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_39.png", UriKind.RelativeOrAbsolute));
@@ -1687,7 +2472,7 @@ namespace ANB_SSZ.Module_UI
                 else
                 {
                     // 不是放映者，放有熊的圖標
-                    if ((cameraData != null) && (cameraData[0] >= majorMethod.confThreshold))
+                    if (majorMethod.LiveButton_OldValue[8] == true)
                     {
                         ImageBrush imgb_live_button = new();
                         imgb_live_button.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_live_10_29.png", UriKind.RelativeOrAbsolute));
@@ -1719,9 +2504,9 @@ namespace ANB_SSZ.Module_UI
             int BearTop = -1;
             int BearRight = -1;
             int BearBottom = -1;
-            
+
             // 依照 showAR 來開關圖層
-            spnlShowAR.Visibility = showAR ? Visibility.Visible: Visibility.Collapsed;
+            spnlShowAR.Visibility = showAR ? Visibility.Visible : Visibility.Collapsed;
 
             if (showAR == false)
                 return;
@@ -1733,7 +2518,7 @@ namespace ANB_SSZ.Module_UI
             //int bearXPos = (int)(bearXRatio * 580) + 0;
             //int bearYPos = (int)(bearYRatio * 470) + 0;
 
-            lblMapPosition.Content = $"bearXRatio:{bearXRatio, 5:N3}, bearYRatio:{bearYRatio, 5:N3}";
+            lblMapPosition.Content = $"bearXRatio:{bearXRatio,5:N3}, bearYRatio:{bearYRatio,5:N3}";
 
             // 顯示 screen_left_top 資料
             ScreenLeft = bearObject.ScreenLeftTop[0];
@@ -1743,7 +2528,7 @@ namespace ANB_SSZ.Module_UI
 
             // 顯示 bear_x_y 資料
             BearLeft = bearObject.BearXY[0] - ScreenLeft;
-            BearTop = bearObject.BearXY[1] - ScreenTop; 
+            BearTop = bearObject.BearXY[1] - ScreenTop;
             BearRight = bearObject.BearXY[2] - ScreenLeft;
             BearBottom = bearObject.BearXY[3] - ScreenTop;
 
@@ -1775,7 +2560,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam1 = bearObject.DataArray[0 + 3];
             if (cam1 != null)
             {
-                lblCam1Conf.Content = $"Cam1：{cam1[0], 5:N3}, Pose:{cam1[2]}";
+                lblCam1Conf.Content = $"Cam1：{cam1[0],5:N3}, Pose:{cam1[2]}";
                 lblCam1Time.Content = $"Time：{cam1[3]}";
             }
             else
@@ -1786,7 +2571,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam2 = bearObject.DataArray[1 + 3];
             if (cam2 != null)
             {
-                lblCam2Conf.Content = $"Cam2：{cam2[0], 5:N3} , Pose:{cam2[2]}";
+                lblCam2Conf.Content = $"Cam2：{cam2[0],5:N3} , Pose:{cam2[2]}";
                 lblCam2Time.Content = $"Time：{cam2[3]}";
             }
             else
@@ -1797,7 +2582,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam3 = bearObject.DataArray[2 + 3];
             if (cam3 != null)
             {
-                lblCam3Conf.Content = $"Cam3：{cam3[0], 5:N3} , Pose:{cam3[2]}";
+                lblCam3Conf.Content = $"Cam3：{cam3[0],5:N3} , Pose:{cam3[2]}";
                 lblCam3Time.Content = $"Time：{cam3[3]}";
             }
             else
@@ -1808,7 +2593,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam4 = bearObject.DataArray[3 + 3];
             if (cam4 != null)
             {
-                lblCam4Conf.Content = $"Cam4：{cam4[0], 5:N3} , Pose:{cam4[2]}";
+                lblCam4Conf.Content = $"Cam4：{cam4[0],5:N3} , Pose:{cam4[2]}";
                 lblCam4Time.Content = $"Time：{cam4[3]}";
             }
             else
@@ -1819,7 +2604,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam5 = bearObject.DataArray[4 + 3];
             if (cam5 != null)
             {
-                lblCam5Conf.Content = $"Cam5：{cam5[0], 5:N3}  , Pose:{cam5[2]}";
+                lblCam5Conf.Content = $"Cam5：{cam5[0],5:N3}  , Pose:{cam5[2]}";
                 lblCam5Time.Content = $"Time：{cam5[3]}";
             }
             else
@@ -1830,7 +2615,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam6 = bearObject.DataArray[5 + 3];
             if (cam6 != null)
             {
-                lblCam6Conf.Content = $"Cam6：{cam6[0], 5:N3}  , Pose:{cam6[2]}";
+                lblCam6Conf.Content = $"Cam6：{cam6[0],5:N3}  , Pose:{cam6[2]}";
                 lblCam6Time.Content = $"Time：{cam6[3]}";
             }
             else
@@ -1841,7 +2626,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam7 = bearObject.DataArray[6 + 3];
             if (cam7 != null)
             {
-                lblCam7Conf.Content = $"Cam7：{cam7[0], 5:N3}  , Pose:{cam7[2]}";
+                lblCam7Conf.Content = $"Cam7：{cam7[0],5:N3}  , Pose:{cam7[2]}";
                 lblCam7Time.Content = $"Time：{cam7[3]}";
             }
             else
@@ -1852,7 +2637,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam8 = bearObject.DataArray[7 + 3];
             if (cam8 != null)
             {
-                lblCam8Conf.Content = $"Cam8：{cam8[0], 5:N3}, Pose:{cam8[2]}";
+                lblCam8Conf.Content = $"Cam8：{cam8[0],5:N3}, Pose:{cam8[2]}";
                 lblCam8Time.Content = $"Time：{cam8[3]}";
             }
             else
@@ -1863,7 +2648,7 @@ namespace ANB_SSZ.Module_UI
             dynamic cam9 = bearObject.DataArray[8 + 3];
             if (cam9 != null)
             {
-                lblCam9Conf.Content = $"Cam9：{cam9[0], 5:N3}  , Pose:{cam9[2]}";
+                lblCam9Conf.Content = $"Cam9：{cam9[0],5:N3}  , Pose:{cam9[2]}";
                 lblCam9Time.Content = $"Time：{cam9[3]}";
             }
             else
@@ -1879,7 +2664,7 @@ namespace ANB_SSZ.Module_UI
                 {
                     if (selectedData[0] != null)
                     {
-                        lblSelectedData.Content = $"choice：Conf {selectedData[0], 5:N3}, Index:{selectedData[3]}, Pose:{selectedData[2]}";
+                        lblSelectedData.Content = $"choice：Conf {selectedData[0],5:N3}, Index:{selectedData[3]}, Pose:{selectedData[2]}";
                         lblSelectedDataTime.Content = $"Time：{selectedData[4]}";
                     }
                 }
@@ -1905,6 +2690,133 @@ namespace ANB_SSZ.Module_UI
             //TextLog.WriteLog("UI Cam9:" + lblCam9Conf.Content);
             //TextLog.WriteLog("SelectData:" + lblSelectedData.Content);
 
+            // 顯示 area_egg 資料與圖式
+
+            // Egg_1
+            //int Egg_1_X = bearObject.AreaEgg[0].PositionXY[0] - ScreenLeft;
+            //int Egg_1_Y = bearObject.AreaEgg[0].PositionXY[1] - ScreenTop;
+            //lblEgg_1.Content = $"ID:{bearObject.AreaEgg[0].EggId}, New=({Egg_1_X}, {Egg_1_Y}), Ori=({bearObject.AreaEgg[0].PositionXY[0]}, {bearObject.AreaEgg[0].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_1, Egg_1_X);
+            //Canvas.SetTop(lblEgg_1, Egg_1_Y);
+
+            // Egg_2
+            //int Egg_2_X = bearObject.AreaEgg[1].PositionXY[0] - ScreenLeft;
+            //int Egg_2_Y = bearObject.AreaEgg[1].PositionXY[1] - ScreenTop;
+            //lblEgg_2.Content = $"ID:{bearObject.AreaEgg[1].EggId}, New=({Egg_2_X}, {Egg_2_Y}), Ori=({bearObject.AreaEgg[1].PositionXY[0]}, {bearObject.AreaEgg[1].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_2, Egg_2_X);
+            //Canvas.SetTop(lblEgg_2, Egg_2_Y);
+
+            // Egg_3
+            //int Egg_3_X = bearObject.AreaEgg[2].PositionXY[0] - ScreenLeft;
+            //int Egg_3_Y = bearObject.AreaEgg[2].PositionXY[1] - ScreenTop;
+            //lblEgg_3.Content = $"ID:{bearObject.AreaEgg[2].EggId}, New=({Egg_3_X}, {Egg_3_Y}), Ori=({bearObject.AreaEgg[2].PositionXY[0]}, {bearObject.AreaEgg[2].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_3, Egg_3_X);
+            //Canvas.SetTop(lblEgg_3, Egg_3_Y);
+
+            // Egg_4
+            //int Egg_4_X = bearObject.AreaEgg[3].PositionXY[0] - ScreenLeft;
+            //int Egg_4_Y = bearObject.AreaEgg[3].PositionXY[1] - ScreenTop;
+            //lblEgg_4.Content = $"ID:{bearObject.AreaEgg[3].EggId}, New=({Egg_4_X} ,{Egg_4_Y}), Ori=({bearObject.AreaEgg[3].PositionXY[0]}, {bearObject.AreaEgg[3].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_4, Egg_4_X);
+            //Canvas.SetTop(lblEgg_4, Egg_4_Y);
+
+            // Egg_5
+            //int Egg_5_X = bearObject.AreaEgg[4].PositionXY[0] - ScreenLeft;
+            //int Egg_5_Y = bearObject.AreaEgg[4].PositionXY[1] - ScreenTop;
+            //lblEgg_5.Content = $"ID:{bearObject.AreaEgg[4].EggId}, New=({Egg_5_X}, {Egg_5_Y}), Ori=({bearObject.AreaEgg[4].PositionXY[0]}, {bearObject.AreaEgg[4].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_5, Egg_5_X);
+            //Canvas.SetTop(lblEgg_5, Egg_5_Y);
+
+            //// Egg_6
+            //int Egg_6_X = bearObject.AreaEgg[5].PositionXY[0] - ScreenLeft;
+            //int Egg_6_Y = bearObject.AreaEgg[5].PositionXY[1] - ScreenTop;
+            //lblEgg_6.Content = $"ID:{bearObject.AreaEgg[5].EggId}, New=({Egg_6_X}, {Egg_6_Y}), Ori=({bearObject.AreaEgg[5].PositionXY[0]}, {bearObject.AreaEgg[5].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_6, Egg_6_X);
+            //Canvas.SetTop(lblEgg_6, Egg_6_Y);
+
+            //// Egg_7
+            //int Egg_7_X = bearObject.AreaEgg[6].PositionXY[0] - ScreenLeft;
+            //int Egg_7_Y = bearObject.AreaEgg[6].PositionXY[1] - ScreenTop;
+            //lblEgg_7.Content = $"ID:{bearObject.AreaEgg[6].EggId}, New=({Egg_7_X}, {Egg_7_Y}), Ori=({bearObject.AreaEgg[6].PositionXY[0]}, {bearObject.AreaEgg[6].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_7, Egg_7_X);
+            //Canvas.SetTop(lblEgg_7, Egg_7_Y);
+
+            //// Egg_8
+            //int Egg_8_X = bearObject.AreaEgg[7].PositionXY[0] - ScreenLeft;
+            //int Egg_8_Y = bearObject.AreaEgg[7].PositionXY[1] - ScreenTop;
+            //lblEgg_8.Content = $"ID:{bearObject.AreaEgg[7].EggId}, New=({Egg_8_X}, {Egg_8_Y}), Ori=({bearObject.AreaEgg[7].PositionXY[0]}, {bearObject.AreaEgg[7].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_8, Egg_8_X);
+            //Canvas.SetTop(lblEgg_8, Egg_8_Y);
+
+            /* 1112 Mark
+            // Egg_9
+            int Egg_9_X = bearObject.AreaEgg[8].PositionXY[0] - ScreenLeft;
+            int Egg_9_Y = bearObject.AreaEgg[8].PositionXY[1] - ScreenTop;
+            // lblEgg_9.Content = $"ID:{bearObject.AreaEgg[8].EggId}, New=({Egg_9_X}, {Egg_9_Y}), Ori=({bearObject.AreaEgg[8].PositionXY[0]}, {bearObject.AreaEgg[8].PositionXY[1]})";
+            lblEgg_9.Content = $"黑熊棲架";
+            Canvas.SetLeft(lblEgg_9, Egg_9_X);
+            Canvas.SetTop(lblEgg_9, Egg_9_Y);
+            */
+
+            // Egg_10
+            /*
+            int Egg_10_X = bearObject.AreaEgg[9].PositionXY[0] - ScreenLeft;
+            int Egg_10_Y = bearObject.AreaEgg[9].PositionXY[1] - ScreenTop;
+            lblEgg_10.Content = $"ID:{bearObject.AreaEgg[9].EggId}, New=({Egg_10_X}, {Egg_10_Y}), Ori=({bearObject.AreaEgg[9].PositionXY[0]}, {bearObject.AreaEgg[9].PositionXY[1]})";
+            Canvas.SetLeft(lblEgg_10, Egg_10_X);
+            Canvas.SetTop(lblEgg_10, Egg_10_Y);
+
+            // Egg_11
+            int Egg_11_X = bearObject.AreaEgg[10].PositionXY[0] - ScreenLeft;
+            int Egg_11_Y = bearObject.AreaEgg[10].PositionXY[1] - ScreenTop;
+            lblEgg_11.Content = $"ID:{bearObject.AreaEgg[10].EggId}, New=({Egg_11_X}, {Egg_11_Y}), Ori=({bearObject.AreaEgg[10].PositionXY[0]}, {bearObject.AreaEgg[10].PositionXY[1]})";
+            Canvas.SetLeft(lblEgg_11, Egg_11_X);
+            Canvas.SetTop(lblEgg_11, Egg_11_Y);
+            */
+
+            /* 1112 Mark
+            // Egg_12
+            int Egg_12_X = bearObject.AreaEgg[11].PositionXY[0] - ScreenLeft;
+            int Egg_12_Y = bearObject.AreaEgg[11].PositionXY[1] - ScreenTop;
+            //lblEgg_12.Content = $"ID:{bearObject.AreaEgg[11].EggId}, New=({Egg_12_X}, {Egg_12_Y}), Ori=({bearObject.AreaEgg[11].PositionXY[0]}, {bearObject.AreaEgg[11].PositionXY[1]})";
+            lblEgg_12.Content = $"圍牆\n站立區";
+            Canvas.SetLeft(lblEgg_12, Egg_12_X);
+            Canvas.SetTop(lblEgg_12, Egg_12_Y);
+            */
+
+            // Egg_13
+            //int Egg_13_X = bearObject.AreaEgg[12].PositionXY[0] - ScreenLeft;
+            //int Egg_13_Y = bearObject.AreaEgg[12].PositionXY[1] - ScreenTop;
+            //lblEgg_13.Content = $"ID:{bearObject.AreaEgg[12].EggId}, New=({Egg_13_X}, {Egg_13_Y}), Ori=({bearObject.AreaEgg[12].PositionXY[0]}, {bearObject.AreaEgg[12].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_13, Egg_13_X);
+            //Canvas.SetTop(lblEgg_13, Egg_13_Y);
+
+            // Egg_14
+            //int Egg_14_X = bearObject.AreaEgg[13].PositionXY[0] - ScreenLeft;
+            //int Egg_14_Y = bearObject.AreaEgg[13].PositionXY[1] - ScreenTop;
+            //lblEgg_14.Content = $"ID:{bearObject.AreaEgg[13].EggId}, New=({Egg_14_X}, {Egg_14_Y}), Ori=({bearObject.AreaEgg[13].PositionXY[0]}, {bearObject.AreaEgg[13].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_14, Egg_14_X);
+            //Canvas.SetTop(lblEgg_14, Egg_14_Y);
+
+            /* 1112 Mark
+            // Egg_15
+            int Egg_15_X = bearObject.AreaEgg[14].PositionXY[0] - ScreenLeft;
+            int Egg_15_Y = bearObject.AreaEgg[14].PositionXY[1] - ScreenTop;
+            //lblEgg_15.Content = $"ID:{bearObject.AreaEgg[14].EggId}, New=({Egg_15_X}, {Egg_15_Y}), Ori=({bearObject.AreaEgg[14].PositionXY[0]}, {bearObject.AreaEgg[14].PositionXY[1]})";
+            lblEgg_15.Content = $"黑熊水池";
+            Canvas.SetLeft(lblEgg_15, Egg_15_X);
+            Canvas.SetTop(lblEgg_15, Egg_15_Y);
+            */
+
+            // Egg_16
+            //int Egg_16_X = bearObject.AreaEgg[15].PositionXY[0] - ScreenLeft;
+            //int Egg_16_Y = bearObject.AreaEgg[15].PositionXY[1] - ScreenTop;
+            //lblEgg_16.Content = $"ID:{bearObject.AreaEgg[15].EggId}, New=({Egg_16_X}, {Egg_16_Y}), Ori=({bearObject.AreaEgg[15].PositionXY[0]}, {bearObject.AreaEgg[15].PositionXY[1]})";
+            //Canvas.SetLeft(lblEgg_16, Egg_16_X);
+            //Canvas.SetTop(lblEgg_16, Egg_16_Y);
+
+            // 最後紀錄畫一次 AR 畫面的時間
+            // TextLog.WriteLog("UI 畫完 AR 全部資料");
         }
 
 
@@ -2096,6 +3008,11 @@ namespace ANB_SSZ.Module_UI
                     Show_ModeSP_07();
                     break;
 
+                // 盲區 8
+                case ModeKind.ModeSP_08:
+                    Show_ModeSP_08();
+                    break;
+
                 // 盲區 9
                 case ModeKind.ModeSP_09:
                     Show_ModeSP_09();
@@ -2115,103 +3032,110 @@ namespace ANB_SSZ.Module_UI
                 case ModeKind.ModeSP_12:
                     Show_ModeSP_12();
                     break;
+
+                // 盲區 13 - 水池
+                case ModeKind.ModeSP_13:
+                    Show_ModeSP_13();
+                    break;
             }
+        }
+
+        private void HideAllCam9QA()
+        {
+            // 九號相機所有 QA 圖
+            //spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
+
+            //spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
         }
 
         // 關閉所有的 spnl
         private void HideAndResetAllPanel()
         {
-            // Mode 1 首頁
-            spnlMode1.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer.Visibility = Visibility.Collapsed;
-
             // Mode 1.5 站立
-            spnlMode15A20.Visibility = Visibility.Collapsed;
+            spnlMode15A20.Visibility = Visibility.Hidden;
 
             // Mode 2 站立 Q
-            spnlMode2A21.Visibility = Visibility.Collapsed;
+            spnlMode2A21.Visibility = Visibility.Hidden;
 
-            spnlMode2A21_Q1.Visibility = Visibility.Collapsed;
-            spnlMode2A21_Q2.Visibility = Visibility.Collapsed;
-            spnlMode2A21_Q3.Visibility = Visibility.Collapsed;
-            spnlMode2A21_Q4.Visibility = Visibility.Collapsed;
-            spnlMode2A21_Q5.Visibility = Visibility.Collapsed;
+            spnlMode2A21_Q1.Visibility = Visibility.Hidden;
+            spnlMode2A21_Q2.Visibility = Visibility.Hidden;
+            spnlMode2A21_Q3.Visibility = Visibility.Hidden;
+            spnlMode2A21_Q4.Visibility = Visibility.Hidden;
+            spnlMode2A21_Q5.Visibility = Visibility.Hidden;
 
             // Mode 3 站立 A
-            spnlMode3A22.Visibility = Visibility.Collapsed;
-            spnlMode3A22_A.Visibility = Visibility.Collapsed;
-            spnlMode3A22_A_AR.Visibility = Visibility.Collapsed;
+            spnlMode3A22.Visibility = Visibility.Hidden;
+            spnlMode3A22_A.Visibility = Visibility.Hidden;
+            spnlMode3A22_A_AR.Visibility = Visibility.Hidden;
 
             // Mode 1.5 趴臥
-            spnlMode15A30.Visibility = Visibility.Collapsed;
+            spnlMode15A30.Visibility = Visibility.Hidden;
 
             // Mode 2 趴臥 Q
-            spnlMode2A31.Visibility = Visibility.Collapsed;
+            spnlMode2A31.Visibility = Visibility.Hidden;
 
-            spnlMode2A31_Q1.Visibility = Visibility.Collapsed;
-            spnlMode2A31_Q2.Visibility = Visibility.Collapsed;
-            spnlMode2A31_Q3.Visibility = Visibility.Collapsed;
-            spnlMode2A31_Q4.Visibility = Visibility.Collapsed;
-            spnlMode2A31_Q5.Visibility = Visibility.Collapsed;
+            spnlMode2A31_Q1.Visibility = Visibility.Hidden;
+            spnlMode2A31_Q2.Visibility = Visibility.Hidden;
+            spnlMode2A31_Q3.Visibility = Visibility.Hidden;
+            spnlMode2A31_Q4.Visibility = Visibility.Hidden;
+            spnlMode2A31_Q5.Visibility = Visibility.Hidden;
 
             // Mode 3 趴臥 A
-            spnlMode3A32.Visibility = Visibility.Collapsed;
-            spnlMode3A32_A.Visibility = Visibility.Collapsed;
-            spnlMode3A32_A_AR.Visibility = Visibility.Collapsed;
+            spnlMode3A32.Visibility = Visibility.Hidden;
+            spnlMode3A32_A.Visibility = Visibility.Hidden;
+            spnlMode3A32_A_AR.Visibility = Visibility.Hidden;
 
             // Mode 1.5 四足
-            spnlMode15A40.Visibility = Visibility.Collapsed;
+            spnlMode15A40.Visibility = Visibility.Hidden;
 
             // Mode 2 四足 Q
-            spnlMode2A41.Visibility = Visibility.Collapsed;
+            spnlMode2A41.Visibility = Visibility.Hidden;
 
-            spnlMode2A41_Q1.Visibility = Visibility.Collapsed;
-            spnlMode2A41_Q2.Visibility = Visibility.Collapsed;
-            spnlMode2A41_Q3.Visibility = Visibility.Collapsed;
-            spnlMode2A41_Q4.Visibility = Visibility.Collapsed;
-            spnlMode2A41_Q5.Visibility = Visibility.Collapsed;
+            spnlMode2A41_Q1.Visibility = Visibility.Hidden;
+            spnlMode2A41_Q2.Visibility = Visibility.Hidden;
+            spnlMode2A41_Q3.Visibility = Visibility.Hidden;
+            spnlMode2A41_Q4.Visibility = Visibility.Hidden;
+            spnlMode2A41_Q5.Visibility = Visibility.Hidden;
 
             // Mode 3 四足 A
-            spnlMode3A42.Visibility = Visibility.Collapsed;
-            spnlMode3A42_A.Visibility = Visibility.Collapsed;
-            spnlMode3A42_A_AR.Visibility = Visibility.Collapsed;
+            spnlMode3A42.Visibility = Visibility.Hidden;
+            spnlMode3A42_A.Visibility = Visibility.Hidden;
+            spnlMode3A42_A_AR.Visibility = Visibility.Hidden;
 
             // Mode 1.5 坐
-            spnlMode15A50.Visibility = Visibility.Collapsed;
+            spnlMode15A50.Visibility = Visibility.Hidden;
 
             // Mode 2 坐 Q
-            spnlMode2A51.Visibility = Visibility.Collapsed;
+            spnlMode2A51.Visibility = Visibility.Hidden;
 
-            spnlMode2A51_Q1.Visibility = Visibility.Collapsed;
-            spnlMode2A51_Q2.Visibility = Visibility.Collapsed;
-            spnlMode2A51_Q3.Visibility = Visibility.Collapsed;
-            spnlMode2A51_Q4.Visibility = Visibility.Collapsed;
-            spnlMode2A51_Q5.Visibility = Visibility.Collapsed;
+            spnlMode2A51_Q1.Visibility = Visibility.Hidden;
+            spnlMode2A51_Q2.Visibility = Visibility.Hidden;
+            spnlMode2A51_Q3.Visibility = Visibility.Hidden;
+            spnlMode2A51_Q4.Visibility = Visibility.Hidden;
+            spnlMode2A51_Q5.Visibility = Visibility.Hidden;
 
             // Mode 3 坐 A
-            spnlMode3A52.Visibility = Visibility.Collapsed;
-            spnlMode3A52_A.Visibility = Visibility.Collapsed;
-            spnlMode3A52_A_AR.Visibility = Visibility.Collapsed;
+            spnlMode3A52.Visibility = Visibility.Hidden;
+            spnlMode3A52_A.Visibility = Visibility.Hidden;
+            spnlMode3A52_A_AR.Visibility = Visibility.Hidden;
 
             // Mode 1.5 花絮
-            spnlMode15B10.Visibility = Visibility.Collapsed;
-
-            // Mode 2 B20 花絮
-            spnlMode2B20.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer_B20.Visibility = Visibility.Collapsed;
-
-            // Mode 2 B30 花絮
-            spnlMode2B30.Visibility = Visibility.Collapsed;
-            mdeMoviePlayer_B30.Visibility = Visibility.Collapsed;
+            spnlMode15B10.Visibility = Visibility.Hidden;
 
             // Mode 2 Map
-            spnlMode2Map.Visibility = Visibility.Collapsed;
+            spnlMode2Map.Visibility = Visibility.Hidden;
             spnlMapIcon.Visibility = Visibility.Hidden;
 
             // Mode 2 Live
             spnlMode2Live.Visibility = Visibility.Hidden;
             cnsLive.Visibility = Visibility.Hidden;
-            //mainVideoView.Visibility = Visibility.Hidden;
+
 
             // 盲區所有的 Panel
             spnlModeSP_01.Visibility = Visibility.Hidden;
@@ -2234,6 +3158,9 @@ namespace ANB_SSZ.Module_UI
             spnlModeSP_07_BG.Visibility = Visibility.Hidden;
             spnlModeSP_07.Visibility = Visibility.Hidden;
 
+            spnlModeSP_08_BG.Visibility = Visibility.Hidden;
+            spnlModeSP_08.Visibility = Visibility.Hidden;
+
             spnlModeSP_09_BG.Visibility = Visibility.Hidden;
             spnlModeSP_09.Visibility = Visibility.Hidden;
 
@@ -2245,6 +3172,20 @@ namespace ANB_SSZ.Module_UI
 
             spnlModeSP_12_BG.Visibility = Visibility.Hidden;
             spnlModeSP_12.Visibility = Visibility.Hidden;
+
+            spnlModeSP_13_BG.Visibility = Visibility.Hidden;
+            spnlModeSP_13.Visibility = Visibility.Hidden;
+
+            // 九號相機所有 QA 圖
+            //spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
+
+            //spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
+            //spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
         }
 
         // 顯示 Mode 0 的畫面(ZOO_A_10)
@@ -2272,42 +3213,36 @@ namespace ANB_SSZ.Module_UI
                 imgb_c_mode_01.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
             }
 
-            spnlMode1.Visibility = Visibility.Visible;
-            spnlMode1.Background = imgb_c_mode_01;
-
-            // 顯示動畫部份
-            Uri Mode1MoviePath = new Uri(".\\Image\\ZOO_A_10.mp4", UriKind.RelativeOrAbsolute);
-            mdeMoviePlayer.Visibility = Visibility.Visible;
-            mdeMoviePlayer.Source = Mode1MoviePath;
-            mdeMoviePlayer.Play();
-        }
-
-        // 影片撥放到最後時
-        private void mdeMoviePlayer_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer.Position = TimeSpan.Zero;
-            mdeMoviePlayer.Play();
         }
 
         // 顯示 Mode 1.5 站立
         private void Show_Mode15_A20_1()
         {
             // 顯示圖層
-            ImageBrush imgb_c_mode_15_a20 = new();
+            //ImageBrush imgb_c_mode_15_a20 = new();
 
             // 中英文之圖型
             if (languageModel == LanguageMode.Chinese)
             {
-                imgb_c_mode_15_a20.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_20_1.png", UriKind.RelativeOrAbsolute));
+                if (majorMethod.imgb_c_mode_15_a20_c == null)
+                {
+                    majorMethod.imgb_c_mode_15_a20_c = new();
+                    majorMethod.imgb_c_mode_15_a20_c.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_20_1.png", UriKind.RelativeOrAbsolute));
+                }
+                majorMethod.imgb_c_mode_15_a20 = majorMethod.imgb_c_mode_15_a20_c;
             }
             else
             {
-                imgb_c_mode_15_a20.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_20_1.png", UriKind.RelativeOrAbsolute));
+                if (majorMethod.imgb_c_mode_15_a20_e == null)
+                {
+                    majorMethod.imgb_c_mode_15_a20_e = new();
+                    majorMethod.imgb_c_mode_15_a20_e.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_20_1.png", UriKind.RelativeOrAbsolute));
+                }
+                majorMethod.imgb_c_mode_15_a20 = majorMethod.imgb_c_mode_15_a20_e;
             }
 
             spnlMode15A20.Visibility = Visibility.Visible;
-            spnlMode15A20.Background = imgb_c_mode_15_a20;
+            spnlMode15A20.Background = majorMethod.imgb_c_mode_15_a20;
         }
 
         // 顯示 Mode 2 站立 Q
@@ -2316,7 +3251,7 @@ namespace ANB_SSZ.Module_UI
             // 設定問題的初始位置
             int QPosX = 50;
             int QPosY = 10;
-            
+
             // 顯示圖層
             ImageBrush imgb_c_mode_2_a21 = new();
 
@@ -3437,21 +4372,6 @@ namespace ANB_SSZ.Module_UI
                 }
             }
 
-            spnlMode2B20.Visibility = Visibility.Visible;
-            spnlMode2B20.Background = imgb_c_mode_02_b20;
-
-            // 顯示動畫部份
-            mdeMoviePlayer_B20.Visibility = Visibility.Visible;
-            mdeMoviePlayer_B20.Source = ModeB20MoviePath;
-            mdeMoviePlayer_B20.Play();
-        }
-
-        // B20 Media Player
-        private void mdeMoviePlayer_B20_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer_B20.Position = TimeSpan.Zero;
-            mdeMoviePlayer_B20.Play();
         }
 
         // 花絮影片 - args 會傳入 8, 14, 15, 16
@@ -3513,22 +4433,8 @@ namespace ANB_SSZ.Module_UI
                 }
             }
 
-            spnlMode2B30.Visibility = Visibility.Visible;
-            spnlMode2B30.Background = imgb_c_mode_02_b30;
-
-            // 顯示動畫部份
-            mdeMoviePlayer_B30.Visibility = Visibility.Visible;
-            mdeMoviePlayer_B30.Source = ModeB30MoviePath;
-            mdeMoviePlayer_B30.Play();
         }
 
-        // B30 Media Player
-        private void mdeMoviePlayer_B30_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            // 媒體播放結束時觸發這個事件，將媒體的位置設定為0，以重新開始播放
-            mdeMoviePlayer_B30.Position = TimeSpan.Zero;
-            mdeMoviePlayer_B30.Play();
-        }
 
         // 顯示 Map 圖層
         private void Show_Mode2_Map()
@@ -3581,7 +4487,8 @@ namespace ANB_SSZ.Module_UI
                 dynamic cameraData = bearObject.DataArray[11];
 
                 // No.9 攝影機是放映者
-                if ((cameraData != null) && (cameraData[0] >= majorMethod.confThresholdList[8]))
+                //if ((cameraData != null) && (cameraData[0] >= majorMethod.confThresholdList[8]))
+                if (majorMethod.LiveButton_OldValue[8] == true)
                 {
                     playRTSPStream(8);
                 }
@@ -3598,80 +4505,127 @@ namespace ANB_SSZ.Module_UI
 
         public void playRTSPStream(int index)
         {
-            // 相同的就不變
-            //if (index == liveCamIndex)
-            //    return;
-
             // 隱藏所有畫面
             hideAllRTSPStream();
-
-            //try
-            //{
-            //    // 如果當前有顯示的串流，先解除綁定
-            //    if (liveCamIndex >= 0)
-            //    {
-            //        mainVideoView.MediaPlayer = null;
-            //    }
-
-            //    // 設定新的串流
-            //    mainVideoView.MediaPlayer = _mediaPlayers[index];
-            //    // _currentStreamIndex = index;
-
-            //    // statusText.Text = $"目前顯示: Camera {index + 1}";
-
-            //    // 紀錄目前的畫面編號
-            //    liveCamIndex = index;
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine($"切換串流時發生錯誤: {ex.Message}");
-            //}
+            HideAllCam9QA();
 
             // 紀錄目前的畫面編號
             liveCamIndex = index;
 
+            VideoDisplay.Visibility = Visibility.Visible;
+
             // 根據 camIndex 選擇相機
             switch (liveCamIndex)
             {
-                //case 0:
-                //    vdwMode2LiveCam0.Visibility = Visibility.Visible;
-                //    break;
+                case 0:
+                    //vdwMode2LiveCam0.Visibility = Visibility.Visible;
+                    
+                    break;
 
-                //case 1:
-                //    vdwMode2LiveCam1.Visibility = Visibility.Visible;
-                //    break;
+                case 1:
+                    //vdwMode2LiveCam1.Visibility = Visibility.Visible;
+                    break;
 
-                //case 2:
-                //    vdwMode2LiveCam2.Visibility = Visibility.Visible;
-                //    break;
+                case 2:
+                    //vdwMode2LiveCam2.Visibility = Visibility.Visible;
+                    break;
 
-                //case 3:
-                //    vdwMode2LiveCam3.Visibility = Visibility.Visible;
-                //    break;
+                case 3:
+                    //vdwMode2LiveCam3.Visibility = Visibility.Visible;
+                    break;
 
-                //case 4:
-                //    vdwMode2LiveCam4.Visibility = Visibility.Visible;
-                //    break;
+                case 4:
+                    //vdwMode2LiveCam4.Visibility = Visibility.Visible;
+                    break;
 
-                //case 5:
-                //    vdwMode2LiveCam5.Visibility = Visibility.Visible;
-                //    break;
+                case 5:
+                    //vdwMode2LiveCam5.Visibility = Visibility.Visible;
+                    break;
 
-                //case 6:
-                //    vdwMode2LiveCam6.Visibility = Visibility.Visible;
-                //    break;
+                case 6:
+                    //vdwMode2LiveCam6.Visibility = Visibility.Visible;
+                    break;
 
-                //case 7:
-                //    vdwMode2LiveCam7.Visibility = Visibility.Visible;
-                //    break;
+                case 7:
+                    //vdwMode2LiveCam7.Visibility = Visibility.Visible;
+                    break;
 
-                //case 8:
-                //    vdwMode2LiveCam8.Visibility = Visibility.Visible;
-                //    break;
+                // 9 號相機比較複雜，因為還有旁邊的問題要顯示
+                case 8:
+                    //vdwMode2LiveCam8.Visibility = Visibility.Visible;
+
+                    //if (BearInCamera9() == true)
+                    if (majorMethod.LiveButton_OldValue[8])
+                    {
+                        showCam9AndQA();
+                    }
+                    break;
 
                 case 100:
                     break;
             }
+        }
+
+        // 9 號相機比較複雜，因為還有旁邊的問題要顯示
+        private void showCam9AndQA()
+        {
+            /*
+            // 根據 liveCam9QAIndex 來顯示圖型
+            switch (liveCam9QAIndex)
+            {
+                case 0:
+                    // 中英文之圖型
+                    if (languageModel == LanguageMode.Chinese)
+                    {
+                        spnlLiveCam9_A_61.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        spnlLiveCam9_E_A_61.Visibility = Visibility.Visible;
+                    }
+                    break;
+
+                case 1:
+                    // 中英文之圖型
+                    if (languageModel == LanguageMode.Chinese)
+                    {
+                        spnlLiveCam9_A_62.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        spnlLiveCam9_E_A_62.Visibility = Visibility.Visible;
+                    }
+                    break;
+
+                case 2:
+                    // 中英文之圖型
+                    if (languageModel == LanguageMode.Chinese)
+                    {
+                        spnlLiveCam9_A_63.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        spnlLiveCam9_E_A_63.Visibility = Visibility.Visible;
+                    }
+                    break;
+
+                case 3:
+                    // 中英文之圖型
+                    if (languageModel == LanguageMode.Chinese)
+                    {
+                        spnlLiveCam9_A_64.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        spnlLiveCam9_E_A_64.Visibility = Visibility.Visible;
+                    }
+                    break;
+            }
+            */
+            // 依序加一，若超出 3 就歸零
+            liveCam9QAIndex += 1;
+            if (liveCam9QAIndex == 4)
+                liveCam9QAIndex = 0;
         }
 
         // 盲區 SP_02
@@ -3830,6 +4784,31 @@ namespace ANB_SSZ.Module_UI
             spnlModeSP_07.Background = imgb_c_modesp_07;
         }
 
+        private void Show_ModeSP_08()
+        {
+            // 顯示圖層
+            ImageBrush imgb_c_modesp_08_bg = new();
+            ImageBrush imgb_c_modesp_08 = new();
+
+            // 中英文之圖型
+            if (languageModel == LanguageMode.Chinese)
+            {
+                imgb_c_modesp_08_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
+                imgb_c_modesp_08.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_08.png", UriKind.RelativeOrAbsolute));
+            }
+            else
+            {
+                imgb_c_modesp_08_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
+                imgb_c_modesp_08.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_08.png", UriKind.RelativeOrAbsolute));
+            }
+
+            spnlModeSP_08_BG.Visibility = Visibility.Visible;
+            spnlModeSP_08_BG.Background = imgb_c_modesp_08_bg;
+
+            spnlModeSP_08.Visibility = Visibility.Visible;
+            spnlModeSP_08.Background = imgb_c_modesp_08;
+        }
+
         // 盲區 SP_09
         private void Show_ModeSP_09()
         {
@@ -3934,9 +4913,45 @@ namespace ANB_SSZ.Module_UI
             spnlModeSP_12.Background = imgb_c_modesp_12;
         }
 
+        // 盲區 SP_13 - 水池
+        private void Show_ModeSP_13()
+        {
+            // 顯示圖層
+            ImageBrush imgb_c_modesp_13_bg = new();
+            ImageBrush imgb_c_modesp_13 = new();
+
+            // 中英文之圖型
+            if (languageModel == LanguageMode.Chinese)
+            {
+                imgb_c_modesp_13_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_10.png", UriKind.RelativeOrAbsolute));
+                imgb_c_modesp_13.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_B_13.png", UriKind.RelativeOrAbsolute));
+            }
+            else
+            {
+                imgb_c_modesp_13_bg.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_10.png", UriKind.RelativeOrAbsolute));
+                imgb_c_modesp_13.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_13.png", UriKind.RelativeOrAbsolute));
+            }
+
+            spnlModeSP_13_BG.Visibility = Visibility.Visible;
+            spnlModeSP_13_BG.Background = imgb_c_modesp_13_bg;
+
+            spnlModeSP_13.Visibility = Visibility.Visible;
+            spnlModeSP_13.Background = imgb_c_modesp_13;
+        }
+
         private void hideAllRTSPStream()
         {
             // mainVideoView.Visibility = Visibility.Hidden;
+
+            //vdwMode2LiveCam0.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam1.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam2.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam3.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam4.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam5.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam6.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam7.Visibility = Visibility.Hidden;
+            //vdwMode2LiveCam8.Visibility = Visibility.Hidden;
         }
 
         // 相機重新連接
@@ -3975,17 +4990,82 @@ namespace ANB_SSZ.Module_UI
         //public async Task<int> ConnectVideoCam()
         public void ConnectVideoCam()
         {
+            string localIp = "192.168.2.200";
+
             try
             {
                 
+
             }
             catch (Exception ex)
             {
                 TextLog.WriteLog($"發生即時影像撥放錯誤!! {ex.Message}");
+
+                //return -1;
             }
 
         }
 
+        // Player 的錯誤處理機制
+        private async void MediaPlayer_EncounteredError(object? sender, EventArgs e)
+        {
+            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
+
+
+            if (sender != null)
+            {
+                var errorPlayer = sender as MediaPlayer;
+
+                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
+
+                //if (currentPlayer.IsPlaying == true)
+                //{
+                //    await TryReconnect(currentPlayer);
+                //}
+
+                //TextLog.WriteLog("[MediaPlayer_EncounteredError] 發生即時影像撥放錯誤，重新啟動!!");
+            }
+        }
+
+        private async void MediaPlayer_EndReached(object? sender, EventArgs e)
+        {
+            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
+
+            if (sender != null)
+            {
+                var errorPlayer = sender as MediaPlayer;
+
+                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
+
+                //if (currentPlayer.IsPlaying == true)
+                //{
+                //    await TryReconnect(currentPlayer);
+                //}
+
+                //TextLog.WriteLog("[MediaPlayer_EndReached] 發生即時影像撥放錯誤，重新啟動!!");
+            }
+        }
+
+        private async void MediaPlayer_Stopped(object? sender, EventArgs e)
+        {
+            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
+
+            if (sender != null)
+            {
+                var errorPlayer = sender as MediaPlayer;
+
+                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
+
+                //if (currentPlayer.IsPlaying == true)
+                //{
+                //    await TryReconnect(currentPlayer);
+                //}
+
+                //TextLog.WriteLog("[MediaPlayer_Stopped] 發生即時影像撥放錯誤，重新啟動!!");
+            }
+        }
+
+        
         private void grdMain_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // 獲取相對於 Grid 的座標
@@ -4014,14 +5094,14 @@ namespace ANB_SSZ.Module_UI
                 case ModeKind.Mode1:
 
                     // 按下小地圖時
-                    if ((x >= 0) && (x <= 160) && (y >= 450) && (y <= 540)) 
+                    if ((x >= 0) && (x <= 160) && (y >= 450) && (y <= 540))
                     {
                         SetScreenMode(ModeKind.Mode2_MAP_10);
                         break;
                     }
 
                     // 按下 Live 時
-                    if ((x >=175) && (x <= 330) && (y >= 450) && (y <= 540))
+                    if ((x >= 175) && (x <= 330) && (y >= 450) && (y <= 540))
                     {
                         SetScreenMode(ModeKind.Mode2_LIVE_10);
                         break;
@@ -4609,6 +5689,36 @@ namespace ANB_SSZ.Module_UI
 
                     break;
 
+                case ModeKind.ModeSP_08:
+
+                    // 按下小地圖時
+                    if ((x >= 0) && (x <= 160) && (y >= 450) && (y <= 540))
+                    {
+                        SetScreenMode(ModeKind.Mode2_MAP_10);
+                        break;
+                    }
+
+                    // 按下 Live 時
+                    if ((x >= 175) && (x <= 330) && (y >= 450) && (y <= 540))
+                    {
+                        SetScreenMode(ModeKind.Mode2_LIVE_10);
+                        break;
+                    }
+
+                    // 按下中英文切換位置時
+                    if ((x >= 880) && (x <= 960) && (y >= 450) && (y <= 540))
+                    {
+                        // 中英文紀錄
+                        SetLanguageMode(languageModel);
+
+                        // 更新本頁畫面
+                        Show_ModeSP_08();
+
+                        break;
+                    }
+
+                    break;
+
                 case ModeKind.ModeSP_09:
 
                     // 按下小地圖時
@@ -4728,6 +5838,36 @@ namespace ANB_SSZ.Module_UI
                     }
 
                     break;
+
+                case ModeKind.ModeSP_13:
+
+                    // 按下小地圖時
+                    if ((x >= 0) && (x <= 160) && (y >= 450) && (y <= 540))
+                    {
+                        SetScreenMode(ModeKind.Mode2_MAP_10);
+                        break;
+                    }
+
+                    // 按下 Live 時
+                    if ((x >= 175) && (x <= 330) && (y >= 450) && (y <= 540))
+                    {
+                        SetScreenMode(ModeKind.Mode2_LIVE_10);
+                        break;
+                    }
+
+                    // 按下中英文切換位置時
+                    if ((x >= 880) && (x <= 960) && (y >= 450) && (y <= 540))
+                    {
+                        // 中英文紀錄
+                        SetLanguageMode(languageModel);
+
+                        // 更新本頁畫面
+                        Show_ModeSP_13();
+
+                        break;
+                    }
+
+                    break;
             }
 
             //// 如果需要獲取相對於整個視窗的座標
@@ -4737,7 +5877,7 @@ namespace ANB_SSZ.Module_UI
         }
 
         // 2024/12/03 動畫功能
-        private void MoveImageByAnimation(object Target, int NewXPos, int NewYPos, int MoveSeconds = 1)
+        private void MoveImageByAnimation(object Target, int NewXPos, int NewYPos, double MoveSeconds = 0.25)
         {
             // 建立移動物件的動畫
             var storyboard = new Storyboard();
@@ -4960,6 +6100,12 @@ namespace ANB_SSZ.Module_UI
             SetScreenMode(ModeKind.Mode2_A41_1);
         }
 
+        private void spnlModeSP_08_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 行走 - 四足
+            SetScreenMode(ModeKind.Mode2_A41_1);
+        }
+
         private void spnlModeSP_09_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // 坐
@@ -4983,5 +6129,12 @@ namespace ANB_SSZ.Module_UI
             // 坐
             SetScreenMode(ModeKind.Mode2_A51_1);
         }
+
+        private void spnlModeSP_13_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 站
+            SetScreenMode(ModeKind.Mode2_A21_1);
+        }
+
     }
 }

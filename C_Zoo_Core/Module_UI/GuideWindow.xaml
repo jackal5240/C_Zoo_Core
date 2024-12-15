@@ -8,15 +8,11 @@
         Title="GuideWindow" Background="Black" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="None" ResizeMode="NoResize">
     <Grid x:Name="grdMain" Height="540" Width="960" MouseDown="grdMain_MouseDown">
 
-        <!-- Mode 1 -->
-        <MediaElement x:Name="mdeMoviePlayer" MediaEnded="mdeMoviePlayer_MediaEnded" Height="540" Width="960" Visibility="Hidden"/>
-        <StackPanel x:Name="spnlMode1" Height="540" Width="960" Visibility="Hidden"/>
-
         <!-- Mode 1.5 站立 -->
-        <StackPanel x:Name="spnlMode15A20" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
-            <StackPanel x:Name="spnlMode3A22_A_AR" Height="235" Width="300" />
+            <StackPanel x:Name="spnlMode3A22_A_AR" Canvas.Left="0" Canvas.Top="0" Height="490" Width="390" />
         </Canvas>
+        <StackPanel x:Name="spnlMode15A20" Height="540" Width="960" Visibility="Hidden"/>
 
         <!-- Mode 2.0 站立Q -->
         <StackPanel x:Name="spnlMode2A21" Height="540" Width="960" Visibility="Visible" />
@@ -32,13 +28,13 @@
         <StackPanel x:Name="spnlMode3A22" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left"/>
         <Canvas>
             <StackPanel x:Name="spnlMode3A22_A" Height="250" Width="450" Margin="50, 50, 0, 0"/>
-        </Canvas>        
+        </Canvas>
 
         <!-- Mode 1.5 趴臥 -->
-        <StackPanel x:Name="spnlMode15A30" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
-            <StackPanel x:Name="spnlMode3A32_A_AR" Height="235" Width="300" />
+            <StackPanel x:Name="spnlMode3A32_A_AR" Canvas.Left="0" Canvas.Top="0" Height="405" Width="465" />
         </Canvas>
+        <StackPanel x:Name="spnlMode15A30" Height="540" Width="960" Visibility="Hidden"/>
 
         <!-- Mode 2.0 趴臥Q -->
         <StackPanel x:Name="spnlMode2A31" Height="540" Width="960" Visibility="Visible" VerticalAlignment="Top" HorizontalAlignment="Left" />
@@ -57,10 +53,10 @@
         </Canvas>
 
         <!-- Mode 1.5 四足 -->
-        <StackPanel x:Name="spnlMode15A40" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
-            <StackPanel x:Name="spnlMode3A42_A_AR" Height="235" Width="300" />
+            <StackPanel x:Name="spnlMode3A42_A_AR" Canvas.Left="0" Canvas.Top="0" Height="405" Width="465" />
         </Canvas>
+        <StackPanel x:Name="spnlMode15A40" Height="540" Width="960" Visibility="Hidden"/>
 
         <!-- Mode 2.0 四足Q -->
         <StackPanel x:Name="spnlMode2A41" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left" />
@@ -79,10 +75,10 @@
         </Canvas>
 
         <!-- Mode 1.5 坐 -->
-        <StackPanel x:Name="spnlMode15A50" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
-            <StackPanel x:Name="spnlMode3A52_A_AR" Height="235" Width="300" />
+            <StackPanel x:Name="spnlMode3A52_A_AR" Canvas.Left="0" Canvas.Top="0" Height="405" Width="465" />
         </Canvas>
+        <StackPanel x:Name="spnlMode15A50" Height="540" Width="960" Visibility="Hidden"/>
 
         <!-- Mode 2.0 坐Q -->
         <StackPanel x:Name="spnlMode2A51" Height="540" Width="960" Visibility="Hidden" VerticalAlignment="Top" HorizontalAlignment="Left" />
@@ -123,14 +119,6 @@
                 <StackPanel x:Name="spnlB10Icon15" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
             </Canvas>
         </StackPanel>
-
-        <!-- Mode 2 精彩花絮 ZOO_B_20_1 -->
-        <MediaElement x:Name="mdeMoviePlayer_B20" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B20_MediaEnded"/>
-        <StackPanel x:Name="spnlMode2B20" Height="540" Width="960" Visibility="Hidden"/>
-
-        <!-- Mode 2 動物園科普 ZOO_B_30_1 -->
-        <MediaElement x:Name="mdeMoviePlayer_B30" Height="540" Width="960" Visibility="Hidden" MediaEnded="mdeMoviePlayer_B30_MediaEnded"/>
-        <StackPanel x:Name="spnlMode2B30" Height="540" Width="960" Visibility="Hidden"/>
 
         <!-- Mode 2 Map -->
         <StackPanel x:Name="spnlMode2Map" Height="540" Width="960" Visibility="Hidden"/>
@@ -257,6 +245,12 @@
             </StackPanel>
         </Canvas>
 
+        <!-- 盲區部份 ModeSP_08 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_08_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden" />
+            <StackPanel x:Name="spnlModeSP_08" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_08_MouseLeftButtonDown" />
+        </Canvas>
+
         <!-- 盲區部份 ModeSP_09 -->
         <Canvas>
             <StackPanel x:Name="spnlModeSP_09_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden">
@@ -329,13 +323,44 @@
             </StackPanel>
         </Canvas>
 
+        <!-- 盲區部份 ModeSP_13 水池 -->
+        <Canvas>
+            <StackPanel x:Name="spnlModeSP_13_BG" Height="540" Width="960" Canvas.Left="0" Canvas.Top="0" Visibility="Hidden" />
+            <StackPanel x:Name="spnlModeSP_13" Height="150" Width="390" Canvas.Left="17" Canvas.Top="48" Visibility="Hidden" MouseLeftButtonDown="spnlModeSP_13_MouseLeftButtonDown" />
+        </Canvas>
+
         <!-- Mode 2 Live -->
         <Canvas x:Name="cnsLive">
-            
+            <StackPanel x:Name="spnlMode2Live" Canvas.Left="0" Canvas.Top="0" Height="540" Width="960"/>
+            <Image Name="VideoDisplay" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <!--
+            <vlc:VideoView x:Name="vdwMode2LiveCam0" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam1" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam2" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam3" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam4" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam5" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam6" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam7" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
+            <vlc:VideoView x:Name="vdwMode2LiveCam8" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black">
+                <Canvas>
+                    <StackPanel x:Name="spnlLiveCam9_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
+
+                    <StackPanel x:Name="spnlLiveCam9_E_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_E_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_E_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="25" Canvas.Top="88" Height="210" Width="450" />
+                    <StackPanel x:Name="spnlLiveCam9_E_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                </Canvas>
+            </vlc:VideoView>
+            -->
+
             <!-- 
             <vlc:VideoView x:Name="mainVideoView" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
             -->
-            
+
             <StackPanel x:Name="spnlLiveBtn0" VerticalAlignment="Center" Canvas.Left="148" Canvas.Top="440" Height="75" Width="65" />
             <StackPanel x:Name="spnlLiveBtn1" VerticalAlignment="Center" Canvas.Left="223" Canvas.Top="440" Height="75" Width="65" />
             <StackPanel x:Name="spnlLiveBtn2" VerticalAlignment="Center" Canvas.Left="298" Canvas.Top="440" Height="75" Width="65" />
@@ -346,7 +371,6 @@
             <StackPanel x:Name="spnlLiveBtn7" VerticalAlignment="Center" Canvas.Left="673" Canvas.Top="440" Height="75" Width="65" />
             <StackPanel x:Name="spnlLiveBtn8" VerticalAlignment="Center" Canvas.Left="748" Canvas.Top="440" Height="75" Width="65" />
         </Canvas>
-        <StackPanel x:Name="spnlMode2Live" Height="540" Width="960" Panel.ZIndex="10" />
 
         <!-- Mode 2 ShowAR for Debug -->
         <StackPanel x:Name="spnlShowAR" Height="540" Width="960" Visibility="Hidden">
@@ -429,7 +453,7 @@
                 <Label x:Name="lblEgg_16" Canvas.Left="200" Canvas.Top="330" Content="" MaxWidth="940" Foreground="Red" FontSize="18"/>
 
             </Canvas>
-        </StackPanel> 
+        </StackPanel>
 
 
     </Grid>

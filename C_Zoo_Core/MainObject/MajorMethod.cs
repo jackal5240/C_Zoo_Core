@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace GAIA.MainObject
 {
@@ -124,15 +125,15 @@ namespace GAIA.MainObject
         */
 
         // 場域之攝影機 RTSP URL 配置
-        public string camVideoUrl_1 = "rtsp://admin:123456@192.168.86.31:554/stream0";
-        public string camVideoUrl_2 = "rtsp://admin:123456@192.168.86.32:554/stream0";
-        public string camVideoUrl_3 = "rtsp://admin:123456@192.168.86.33:554/stream0";
-        public string camVideoUrl_4 = "rtsp://admin:123456@192.168.86.34:554/stream0";
-        public string camVideoUrl_5 = "rtsp://admin:123456@192.168.86.35:554/stream0";
-        public string camVideoUrl_6 = "rtsp://admin:123456@192.168.86.36:554/stream0";
-        public string camVideoUrl_7 = "rtsp://admin:123456@192.168.86.37:554/stream0";
-        public string camVideoUrl_8 = "rtsp://admin:123456@192.168.86.38:554/stream0";
-        public string camVideoUrl_9 = "rtsp://admin:123456@192.168.86.39:554/stream0";
+        public string camVideoUrl_0 = "rtsp://admin:123456@192.168.86.31:554/stream0";
+        public string camVideoUrl_1 = "rtsp://admin:123456@192.168.86.32:554/stream0";
+        public string camVideoUrl_2 = "rtsp://admin:123456@192.168.86.33:554/stream0";
+        public string camVideoUrl_3 = "rtsp://admin:123456@192.168.86.34:554/stream0";
+        public string camVideoUrl_4 = "rtsp://admin:123456@192.168.86.35:554/stream0";
+        public string camVideoUrl_5 = "rtsp://admin:123456@192.168.86.36:554/stream0";
+        public string camVideoUrl_6 = "rtsp://admin:123456@192.168.86.37:554/stream0";
+        public string camVideoUrl_7 = "rtsp://admin:123456@192.168.86.38:554/stream0";
+        public string camVideoUrl_8 = "rtsp://admin:123456@192.168.86.39:554/stream0";
 
         // 用來設定是否顯示 AR 框線
         public bool showARData = false;
@@ -170,8 +171,8 @@ namespace GAIA.MainObject
         public double Meter_Z = 0.0;
 
         // Cam 中 Conf 的閥值，此值以上代表有熊
-        public double confThreshold = 0.6;
-        public List<double> confThresholdList = [ 0.6, 0.6, 0.6, 0.6, 0.6, 0.6 , 0.6, 0.6, 0.6 ];
+        public double confThreshold = 0.58;
+        public List<double> confThresholdList = [0.58, 0.58, 0.58, 0.58, 0.58, 0.58, 0.58, 0.58, 0.58];
 
         // 從 Mode1/Mode花絮，與 發現熊 之間的切換延遲時間
         // 加入此延遲，是為了避免畫面閃動
@@ -216,14 +217,65 @@ namespace GAIA.MainObject
         public DateTime LiveButtonTime_09 = DateTime.Now - TimeSpan.FromSeconds(2);
 
         // Mode SP1 的阻尼時間
-        public static TimeSpan ModeSP1TimeSpan = TimeSpan.FromMilliseconds(1500);   // 按鈕的阻尼時間
+        public static TimeSpan ModeSP1TimeSpan = TimeSpan.FromMilliseconds(0);   // 按鈕的阻尼時間
         public DateTime ModeSP1Time = DateTime.Now - TimeSpan.FromSeconds(2);
 
+        // 進入盲區的 Count 相關
+        public static TimeSpan ChangeSPTimeSpan = TimeSpan.FromMilliseconds(2000);  // 最大幾秒後，就進入盲區
+        public DateTime ChangeSPTime = DateTime.Now - TimeSpan.FromSeconds(2);
+
+        // 資源檔定義與存取
+        public ImageBrush imgb_spnlLiveCam9_A_61;
+        public ImageBrush imgb_spnlLiveCam9_A_62;
+        public ImageBrush imgb_spnlLiveCam9_A_63;
+        public ImageBrush imgb_spnlLiveCam9_A_64;
+        public ImageBrush imgb_spnlLiveCam9_E_A_61;
+        public ImageBrush imgb_spnlLiveCam9_E_A_62;
+        public ImageBrush imgb_spnlLiveCam9_E_A_63;
+        public ImageBrush imgb_spnlLiveCam9_E_A_64;
+
+        public ImageBrush imgb_ar_a22;
+        public ImageBrush imgb_ar_a32;
+        public ImageBrush imgb_ar_a42;
+        public ImageBrush imgb_ar_a52;
+
+        public ImageBrush imgb_sp01;
+        public ImageBrush imgb_sp01_c;
+        public ImageBrush imgb_sp01_e;
+
+        public ImageBrush imgb_map_button;
+        public ImageBrush imgb_map_button_c;
+        public ImageBrush imgb_map_button_e;
+
+        public ImageBrush imgb_c_mode_15_a20;
+        public ImageBrush imgb_c_mode_15_a20_c;
+        public ImageBrush imgb_c_mode_15_a20_e;
+
+        public ImageBrush imgb_Egg_0;
+        public ImageBrush imgb_Egg_1;
+        public ImageBrush imgb_Egg_2;
+        public ImageBrush imgb_Egg_3;
+        public ImageBrush imgb_Egg_4;
+        public ImageBrush imgb_Egg_5;
+        public ImageBrush imgb_Egg_6;
+        public ImageBrush imgb_Egg_7;
+
+        // AR 框的 Old Value
+        public int ARLeft_OldValue = -1;
+        public int ARRight_OldValue = -1;
+
+        // Live 即時影像下按鈕的 Old Value
+        public List<bool> LiveButton_OldValue = [false, false, false, false, false, false, false, false, false];
+
+        // 1.5 階凍畫面時，當時的高度與角度
+        public bool HaveFix = false;
+        public double Mode15FixDegree = 0.0;
+        public double Mode15FixHeight = 0.0;
 
         // 物件建構式
         public MajorMethod()
-        { 
-        
+        {
+
         }
 
         // 本物件第一個被呼叫的程式，用來建構相關的物件或方法
@@ -235,7 +287,7 @@ namespace GAIA.MainObject
         // 系統結束時，呼叫的方法，用來釋放資源
         public void StopMethod()
         {
-        
+
         }
 
         // 存放 DR 算結果之方法
