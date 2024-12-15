@@ -28,7 +28,7 @@ namespace GAIA.Module_DataReceiver
         public static BackgroundWorker? bgWorker;
         public static MajorMethod? majorMethod;
         public static ClassDR? classDR;
-        public static HttpClient? httpClient;
+        public static HttpClient? httpClient = new HttpClient();
 
         // 是否開始進行資料的轉換
         public static Boolean doWork = true;
@@ -67,7 +67,7 @@ namespace GAIA.Module_DataReceiver
                         SetDRResultData();
                     }
                 }
-                catch (SocketException ex)
+                catch (Exception ex)
                 {
                     // 目前因為沒有  【辨識模組】+【旋轉機構】 資料，所以http請求會掛掉，跑到下面這行，來做假資料的串接
                     string jsonString = "{\"timestamp\": \"2024-12-09 22:37:42\", \"object_detection\": [{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.31:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.32:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.33:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.34:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.35:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.36:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.37:554/stream2\"},{\"data\":[{\"class\":\"bear\",\"conf\":0.9242663383483887,\"coordinates\":[0.8250488638877869,0.7502825856208801,0.9711800217628479,0.992681622505188],\"pose\":\"walk\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.38:554/stream2\"},{\"data\":[{\"class\":\"None\",\"conf\":[],\"coordinates\":[],\"pose\":\"Undetermined\"}],\"rtsp_url\":\"rtsp://admin:123456@192.168.86.39:554/stream2\"}], \"localization\": [0.4, 0.5, 0], \"camera_monitor\": [1, 1, 1, 1, 1, 1, 1, 1, 1], \"area_cal\": [{\"area\": 0, \"camera\": 1, \"conf\": 0.0}, {\"area\": 0, \"camera\": 2, \"conf\": 0.0}, {\"area\": 0, \"camera\": 3, \"conf\": 0.0}, {\"area\": 0, \"camera\": 4, \"conf\": 0.0}, {\"area\": 0, \"camera\": 5, \"conf\": 0.0}, {\"area\": 0, \"camera\": 6, \"conf\": 0.0}, {\"area\": 0, \"camera\": 7, \"conf\": 0.0}, {\"area\": 0, \"camera\": 8, \"conf\": 0.0}, {\"area\": 0, \"camera\": 9, \"conf\": 0.0}], \"rotate\": {\"height\":0.90000000000000002,\"degree\":779,\"timestamp\":1733755090}}";
@@ -75,10 +75,6 @@ namespace GAIA.Module_DataReceiver
 
                     majorMethod.SetSourceObject(sourceObject);
                     SetDRResultData();
-                    Console.WriteLine($"Socket error: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
                     Console.WriteLine($"Unexpected error: {ex.Message}");
                 }
 
