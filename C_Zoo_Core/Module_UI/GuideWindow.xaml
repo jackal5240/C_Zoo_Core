@@ -119,7 +119,15 @@
                 <StackPanel x:Name="spnlB10Icon15" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Width="55" Height="55" />
             </Canvas>
         </StackPanel>
+        
+        <!-- Mode 2 精彩花絮 ZOO_B_20_1 -->
+        <Image Name="VideoDisplay00" VerticalAlignment="Center" Height="540" Width="960" Visibility="Hidden"/>
+        <StackPanel x:Name="spnlMode2B20" Height="540" Width="960" Visibility="Hidden"/>
 
+        <!-- Mode 2 動物園科普 ZOO_B_30_1 -->
+        <Image Name="VideoDisplay99" VerticalAlignment="Center" Height="540" Width="960" Visibility="Hidden"/>
+        <StackPanel x:Name="spnlMode2B30" Height="540" Width="960" Visibility="Hidden"/>
+        
         <!-- Mode 2 Map -->
         <StackPanel x:Name="spnlMode2Map" Height="540" Width="960" Visibility="Hidden"/>
         <Canvas>
@@ -332,7 +340,15 @@
         <!-- Mode 2 Live -->
         <Canvas x:Name="cnsLive">
             <StackPanel x:Name="spnlMode2Live" Canvas.Left="0" Canvas.Top="0" Height="540" Width="960"/>
-            <Image Name="VideoDisplay" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay1" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay2" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay3" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay4" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay5" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay6" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay7" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay8" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
+            <Image Name="VideoDisplay9" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
             <!--
             <vlc:VideoView x:Name="vdwMode2LiveCam0" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
             <vlc:VideoView x:Name="vdwMode2LiveCam1" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>

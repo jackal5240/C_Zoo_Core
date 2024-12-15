@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Buffers;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -74,6 +75,10 @@ namespace ANB_SSZ.Module_UI
         private CancellationTokenSource reconnectCts;
         private readonly int maxReconnectAttempts = 5;
         private readonly int reconnectDelayMs = 3000;
+
+        private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe";
+        private readonly string[] rtspUrls = new string[9]; // 放置 9 個 RTSP URL
+        private CancellationTokenSource[] rtspCancellationTokens;
 
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
@@ -3128,6 +3133,14 @@ namespace ANB_SSZ.Module_UI
             // Mode 1.5 花絮
             spnlMode15B10.Visibility = Visibility.Hidden;
 
+            // Mode 2 B20 花絮
+            spnlMode2B20.Visibility = Visibility.Hidden;
+            VideoDisplay00.Visibility = Visibility.Hidden;
+
+            // Mode 2 B30 花絮
+            spnlMode2B30.Visibility = Visibility.Hidden;
+            VideoDisplay99.Visibility = Visibility.Hidden;
+
             // Mode 2 Map
             spnlMode2Map.Visibility = Visibility.Hidden;
             spnlMapIcon.Visibility = Visibility.Hidden;
@@ -4321,6 +4334,7 @@ namespace ANB_SSZ.Module_UI
 
             // 動畫路徑
             Uri? ModeB20MoviePath = null;
+            VideoDisplay00.Visibility = Visibility.Visible;
 
             // 中英文之圖型
             if (languageModel == LanguageMode.Chinese)
@@ -4332,18 +4346,22 @@ namespace ANB_SSZ.Module_UI
                 {
                     case 1:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 2:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 3:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 5:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
                 }
             }
@@ -4356,21 +4374,27 @@ namespace ANB_SSZ.Module_UI
                 {
                     case 1:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_1_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 2:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_2_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 3:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_3_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 5:
                         ModeB20MoviePath = new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay00.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_20_4_mp4.mp4", UriKind.RelativeOrAbsolute));
                         break;
                 }
             }
+            spnlMode2B20.Visibility = Visibility.Visible;
+            spnlMode2B20.Background = imgb_c_mode_02_b20;
 
         }
 
@@ -4393,18 +4417,22 @@ namespace ANB_SSZ.Module_UI
                 {
                     case 8:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_05.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_05.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 14:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_07.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_07.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 15:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_08.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_08.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 16:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_06.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_06.mp4", UriKind.RelativeOrAbsolute));
                         break;
                 }
             }
@@ -4417,21 +4445,27 @@ namespace ANB_SSZ.Module_UI
                 {
                     case 8:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_05.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_30_05.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 14:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_07.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_30_07.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 15:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_08.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_30_08.mp4", UriKind.RelativeOrAbsolute));
                         break;
 
                     case 16:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_E_B_30_06.mp4", UriKind.RelativeOrAbsolute);
+                        VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_E_B_30_06.mp4", UriKind.RelativeOrAbsolute));
                         break;
                 }
             }
+            spnlMode2B30.Visibility = Visibility.Visible;
+            spnlMode2B30.Background = imgb_c_mode_02_b30;
 
         }
 
@@ -4512,47 +4546,47 @@ namespace ANB_SSZ.Module_UI
             // 紀錄目前的畫面編號
             liveCamIndex = index;
 
-            VideoDisplay.Visibility = Visibility.Visible;
-
             // 根據 camIndex 選擇相機
             switch (liveCamIndex)
             {
                 case 0:
                     //vdwMode2LiveCam0.Visibility = Visibility.Visible;
-                    
+                    VideoDisplay1.Visibility = Visibility.Visible;
                     break;
 
                 case 1:
                     //vdwMode2LiveCam1.Visibility = Visibility.Visible;
+                    VideoDisplay2.Visibility = Visibility.Visible;
                     break;
 
                 case 2:
                     //vdwMode2LiveCam2.Visibility = Visibility.Visible;
+                    VideoDisplay3.Visibility = Visibility.Visible;
                     break;
 
                 case 3:
-                    //vdwMode2LiveCam3.Visibility = Visibility.Visible;
+                    VideoDisplay4.Visibility = Visibility.Visible;
                     break;
 
                 case 4:
-                    //vdwMode2LiveCam4.Visibility = Visibility.Visible;
+                    VideoDisplay5.Visibility = Visibility.Visible;
                     break;
 
                 case 5:
-                    //vdwMode2LiveCam5.Visibility = Visibility.Visible;
+                    VideoDisplay6.Visibility = Visibility.Visible;
                     break;
 
                 case 6:
-                    //vdwMode2LiveCam6.Visibility = Visibility.Visible;
+                    VideoDisplay7.Visibility = Visibility.Visible;
                     break;
 
                 case 7:
-                    //vdwMode2LiveCam7.Visibility = Visibility.Visible;
+                    VideoDisplay8.Visibility = Visibility.Visible;
                     break;
 
                 // 9 號相機比較複雜，因為還有旁邊的問題要顯示
                 case 8:
-                    //vdwMode2LiveCam8.Visibility = Visibility.Visible;
+                    VideoDisplay9.Visibility = Visibility.Visible;
 
                     //if (BearInCamera9() == true)
                     if (majorMethod.LiveButton_OldValue[8])
@@ -4994,7 +5028,14 @@ namespace ANB_SSZ.Module_UI
 
             try
             {
-                
+                // 初始化 RTSP URLs
+                for (int i = 0; i < 9; i++)
+                {
+                    rtspUrls[i] = $"rtsp://admin:123456@211.72.89.201:{31 + i}00/stream0"; // 替換為實際 RTSP URL
+                }
+
+                rtspCancellationTokens = new CancellationTokenSource[9];
+                StartRtspStreams(); // 啟動所有 RTSP 流
 
             }
             catch (Exception ex)
@@ -5005,67 +5046,86 @@ namespace ANB_SSZ.Module_UI
             }
 
         }
-
-        // Player 的錯誤處理機制
-        private async void MediaPlayer_EncounteredError(object? sender, EventArgs e)
+        private void StartRtspStreams()
         {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
-
-
-            if (sender != null)
+            for (int i = 0; i < 9; i++)
             {
-                var errorPlayer = sender as MediaPlayer;
-
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
-
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
-
-                //TextLog.WriteLog("[MediaPlayer_EncounteredError] 發生即時影像撥放錯誤，重新啟動!!");
+                StartRtspStream(i);
             }
         }
-
-        private async void MediaPlayer_EndReached(object? sender, EventArgs e)
+        private void StartRtspStream(int index)
         {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
+            rtspCancellationTokens[index]?.Cancel(); // 停止當前流（如果有）
 
-            if (sender != null)
+            var cancellationToken = new CancellationTokenSource();
+            rtspCancellationTokens[index] = cancellationToken;
+
+            // 背景執行 RTSP 流
+            Task.Run(() => PlayRtspStream(rtspUrls[index], index, cancellationToken.Token));
+        }
+        private void PlayRtspStream(string url, int index, CancellationToken cancellationToken)
+        {
+            try
             {
-                var errorPlayer = sender as MediaPlayer;
+                Process ffmpegProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ffmpegPath,
+                        Arguments = $"-i {url} -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
 
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
+                ffmpegProcess.Start();
 
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
+                using var ffmpegOutput = ffmpegProcess.StandardOutput.BaseStream;
+                BitmapImage bitmapImage = new BitmapImage();
 
-                //TextLog.WriteLog("[MediaPlayer_EndReached] 發生即時影像撥放錯誤，重新啟動!!");
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    using (var stream = ffmpegProcess.StandardOutput.BaseStream)
+                    {
+                        // 從 FFmpeg 讀取影像流並顯示
+                        var bitmap = ReadFrame(stream);
+                        if (bitmap != null)
+                        {
+                            // 更新 UI 控件
+                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                GetRtspImageControl(index).Source = bitmapImage;
+                            });
+                        }
+                    }
+                     
+                }
+
+                ffmpegProcess.Kill();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"RTSP 流 {index + 1} 播放錯誤: {ex.Message}");
             }
         }
-
-        private async void MediaPlayer_Stopped(object? sender, EventArgs e)
+        private System.Windows.Controls.Image GetRtspImageControl(int index)
         {
-            TextLog.WriteLog($"發生即時影像撥放錯誤!! {sender.ToString()}");
-
-            if (sender != null)
-            {
-                var errorPlayer = sender as MediaPlayer;
-
-                //LibVLCSharp.Shared.MediaPlayer currentPlayer = (LibVLCSharp.Shared.MediaPlayer)sender;
-
-                //if (currentPlayer.IsPlaying == true)
-                //{
-                //    await TryReconnect(currentPlayer);
-                //}
-
-                //TextLog.WriteLog("[MediaPlayer_Stopped] 發生即時影像撥放錯誤，重新啟動!!");
-            }
+            return (System.Windows.Controls.Image)this.FindName($"VideoDisplay{index + 1}");
         }
-
-        
+        private byte[] ReadFrame(Stream stream)
+        {
+            using MemoryStream ms = new MemoryStream();
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, bytesRead);
+                if (ms.Length > 1024 * 1024) // 假設每幀影像大小 < 1 MB
+                    break;
+            }
+            return ms.ToArray();
+        }
         private void grdMain_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // 獲取相對於 Grid 的座標
