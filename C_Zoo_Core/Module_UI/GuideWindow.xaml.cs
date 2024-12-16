@@ -77,6 +77,7 @@ namespace ANB_SSZ.Module_UI
         private readonly int reconnectDelayMs = 3000;
 
         private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe";
+        //private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\bin\ffmpeg.exe";
         private Process _ffmpegProcess1, _ffmpegProcess2, _ffmpegProcess3, _ffmpegProcess4, _ffmpegProcess5, _ffmpegProcess6, _ffmpegProcess7, _ffmpegProcess8, _ffmpegProcess9;
         private Thread _streamThread1, _streamThread2, _streamThread3, _streamThread4, _streamThread5, _streamThread6, _streamThread7, _streamThread8, _streamThread9;
 
