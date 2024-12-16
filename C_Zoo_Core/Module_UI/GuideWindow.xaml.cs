@@ -5147,7 +5147,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3100/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3100/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.31:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5193,7 +5194,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3200/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3200/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.32:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5239,7 +5241,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3300/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3300/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.33:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5285,7 +5288,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3400/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3400/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.34:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5331,7 +5335,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3500/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3500/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.35:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5377,7 +5382,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3600/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3600/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.36:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5423,7 +5429,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3700/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3700/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.37:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5469,7 +5476,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3800/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3800/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.38:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
@@ -5515,7 +5523,8 @@ namespace ANB_SSZ.Module_UI
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = ffmpegPath,
-                        Arguments = $"-i rtsp://admin:123456@211.72.89.201:3900/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3900/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:123456@192.168.86.39:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
