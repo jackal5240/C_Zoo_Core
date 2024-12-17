@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Point = System.Windows.Point;
-
+using RTSPPlayerLibrary;
 namespace ANB_SSZ.Module_UI
 {
     /// <summary>
@@ -80,6 +80,7 @@ namespace ANB_SSZ.Module_UI
         //private readonly string ffmpegPath = @"C:\Program Files\FFMPEG\bin\ffmpeg.exe";
         private Process _ffmpegProcess1, _ffmpegProcess2, _ffmpegProcess3, _ffmpegProcess4, _ffmpegProcess5, _ffmpegProcess6, _ffmpegProcess7, _ffmpegProcess8, _ffmpegProcess9;
         private Thread _streamThread1, _streamThread2, _streamThread3, _streamThread4, _streamThread5, _streamThread6, _streamThread7, _streamThread8, _streamThread9;
+        RTSPPlayerWindow rTSPPlayerWindow1, rTSPPlayerWindow2, rTSPPlayerWindow3, rTSPPlayerWindow4, rTSPPlayerWindow5, rTSPPlayerWindow6, rTSPPlayerWindow7, rTSPPlayerWindow8, rTSPPlayerWindow9, rTSPPlayerWindow0;
 
         // 盲區一很特別，只是顯示文字，不改變原來的 Mode
         public bool IsModeSP_01 = false;
@@ -5110,6 +5111,96 @@ namespace ANB_SSZ.Module_UI
 
             try
             {
+                // Live 1
+                rTSPPlayerWindow1 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        1,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow1.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow1.Show();
+
+                // Live 2
+                rTSPPlayerWindow2 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        2,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow2.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow2.Show();
+
+                // Live 3
+                rTSPPlayerWindow3 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        3,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow3.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow3.Show();
+
+                // Live 4
+                rTSPPlayerWindow4 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        4,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow4.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow4.Show();
+
+                // Live 5
+                rTSPPlayerWindow5 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        5,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow5.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow5.Show();
+
+                // Live 6
+                rTSPPlayerWindow6 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        6,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow6.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow6.Show();
+
+                // Live 7
+                rTSPPlayerWindow7 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        7,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow7.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow7.Show();
+
+                // Live 8
+                rTSPPlayerWindow8 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        8,                                     // RTSP Index (1~9)
+                        false,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow8.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow8.Show();
+
+                // Live 9
+                rTSPPlayerWindow9 = new RTSPPlayerWindow(
+                        @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
+                        9,                                     // RTSP Index (1~9)
+                        true,                                  // 是否顯示圖片
+                        @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
+                );
+                //rTSPPlayerWindow9.PointFromScreen(new Point(200, 90));
+                rTSPPlayerWindow9.Show();
+                /*
                 _streamThread1 = new Thread(ReadRTSPStream1) { IsBackground = true };
                 _streamThread1.Start();
                 _streamThread2 = new Thread(ReadRTSPStream2) { IsBackground = true };
@@ -5128,7 +5219,7 @@ namespace ANB_SSZ.Module_UI
                 _streamThread8.Start();
                 _streamThread9 = new Thread(ReadRTSPStream9) { IsBackground = true };
                 _streamThread9.Start();
-
+                */
             }
             catch (Exception ex)
             {
@@ -5149,7 +5240,8 @@ namespace ANB_SSZ.Module_UI
                     {
                         FileName = ffmpegPath,
                         //Arguments = $"-i rtsp://admin:123456@211.72.89.201:3100/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
-                        Arguments = $"-i rtsp://admin:123456@192.168.86.31:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        //Arguments = $"-i rtsp://admin:123456@192.168.86.31:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
+                        Arguments = $"-i rtsp://admin:Pass1234@192.168.101.200:554/stream0 -vf scale=640:480 -f image2pipe -vcodec mjpeg -",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true
