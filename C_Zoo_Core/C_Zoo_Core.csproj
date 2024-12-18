@@ -17,6 +17,9 @@
     <Reference Include="RTSPPlayerLibrary">
       <HintPath>..\..\RTSPClient\RTSPPlayerLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="VideoPlayerLibrary">
+      <HintPath>..\VideoPlayerLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

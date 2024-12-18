@@ -349,33 +349,17 @@
             <Image Name="VideoDisplay7" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
             <Image Name="VideoDisplay8" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
             <Image Name="VideoDisplay9" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden"/>
-            <!--
-            <vlc:VideoView x:Name="vdwMode2LiveCam0" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam1" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam2" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam3" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam4" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam5" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam6" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam7" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            <vlc:VideoView x:Name="vdwMode2LiveCam8" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black">
-                <Canvas>
-                    <StackPanel x:Name="spnlLiveCam9_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
+            <Canvas>
+                <StackPanel x:Name="spnlLiveCam9_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="0" Canvas.Top="0" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
 
-                    <StackPanel x:Name="spnlLiveCam9_E_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_E_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_E_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="25" Canvas.Top="88" Height="210" Width="450" />
-                    <StackPanel x:Name="spnlLiveCam9_E_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
-                </Canvas>
-            </vlc:VideoView>
-            -->
-
-            <!-- 
-            <vlc:VideoView x:Name="mainVideoView" VerticalAlignment="Center" Canvas.Left="200" Canvas.Top="90" Height="310" Width="560" Panel.ZIndex="0" Visibility="Hidden" Background="Black"/>
-            -->
+                <StackPanel x:Name="spnlLiveCam9_E_A_61" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="145" Canvas.Top="25" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_E_A_62" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_E_A_63" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="25" Canvas.Top="88" Height="210" Width="450" />
+                <StackPanel x:Name="spnlLiveCam9_E_A_64" Panel.ZIndex="10" VerticalAlignment="Center" Canvas.Left="29" Canvas.Top="12" Height="210" Width="450" />
+            </Canvas>
 
             <StackPanel x:Name="spnlLiveBtn0" VerticalAlignment="Center" Canvas.Left="148" Canvas.Top="440" Height="75" Width="65" />
             <StackPanel x:Name="spnlLiveBtn1" VerticalAlignment="Center" Canvas.Left="223" Canvas.Top="440" Height="75" Width="65" />

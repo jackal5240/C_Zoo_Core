@@ -17,6 +17,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Point = System.Windows.Point;
 using RTSPPlayerLibrary;
+using VideoPlayerLibrary;
 namespace ANB_SSZ.Module_UI
 {
     /// <summary>
@@ -112,6 +113,62 @@ namespace ANB_SSZ.Module_UI
         // 預先載入一些圖
         private void PreloadImage()
         {
+            // Cam9 相關
+            if (majorMethod.imgb_spnlLiveCam9_A_61 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_A_61 = new();
+                majorMethod.imgb_spnlLiveCam9_A_61.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_61.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_A_61.Background = majorMethod.imgb_spnlLiveCam9_A_61;
+
+            if (majorMethod.imgb_spnlLiveCam9_A_62 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_A_62 = new();
+                majorMethod.imgb_spnlLiveCam9_A_62.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_62.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_A_62.Background = majorMethod.imgb_spnlLiveCam9_A_62;
+
+            if (majorMethod.imgb_spnlLiveCam9_A_63 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_A_63 = new();
+                majorMethod.imgb_spnlLiveCam9_A_63.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_63.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_A_63.Background = majorMethod.imgb_spnlLiveCam9_A_63;
+
+            if (majorMethod.imgb_spnlLiveCam9_A_64 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_A_64 = new();
+                majorMethod.imgb_spnlLiveCam9_A_64.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_A_64.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_A_64.Background = majorMethod.imgb_spnlLiveCam9_A_64;
+
+            if (majorMethod.imgb_spnlLiveCam9_E_A_61 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_E_A_61 = new();
+                majorMethod.imgb_spnlLiveCam9_E_A_61.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_61.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_E_A_61.Background = majorMethod.imgb_spnlLiveCam9_E_A_61;
+
+            if (majorMethod.imgb_spnlLiveCam9_E_A_62 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_E_A_62 = new();
+                majorMethod.imgb_spnlLiveCam9_E_A_62.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_62.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_E_A_62.Background = majorMethod.imgb_spnlLiveCam9_E_A_62;
+
+            if (majorMethod.imgb_spnlLiveCam9_E_A_63 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_E_A_63 = new();
+                majorMethod.imgb_spnlLiveCam9_E_A_63.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_63.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_E_A_63.Background = majorMethod.imgb_spnlLiveCam9_E_A_63;
+
+            if (majorMethod.imgb_spnlLiveCam9_E_A_64 == null)
+            {
+                majorMethod.imgb_spnlLiveCam9_E_A_64 = new();
+                majorMethod.imgb_spnlLiveCam9_E_A_64.ImageSource = new BitmapImage(new Uri(".\\Image\\ZOO_E_A_64.png", UriKind.RelativeOrAbsolute));
+            }
+            spnlLiveCam9_E_A_64.Background = majorMethod.imgb_spnlLiveCam9_E_A_64;
         }
 
         // 用中介的方式來非同步啟動攝影機
@@ -3131,15 +3188,15 @@ namespace ANB_SSZ.Module_UI
         private void HideAllCam9QA()
         {
             // 九號相機所有 QA 圖
-            //spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
 
-            //spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
         }
 
         // 關閉所有的 spnl
@@ -3273,15 +3330,15 @@ namespace ANB_SSZ.Module_UI
             spnlModeSP_13.Visibility = Visibility.Hidden;
 
             // 九號相機所有 QA 圖
-            //spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_61.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_62.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_63.Visibility = Visibility.Hidden;
+            spnlLiveCam9_A_64.Visibility = Visibility.Hidden;
 
-            //spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
-            //spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_61.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_62.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_63.Visibility = Visibility.Hidden;
+            spnlLiveCam9_E_A_64.Visibility = Visibility.Hidden;
         }
 
         // 顯示 Mode 0 的畫面(ZOO_A_10)
@@ -4392,6 +4449,8 @@ namespace ANB_SSZ.Module_UI
         // 顯示 Mode 1.5 黑熊花絮
         private void Show_Mode15_B10()
         {
+            //var videoManager1 = new VideoPlayerWindow(1, true);
+            //videoManager1.Show();
             // 顯示圖層
             ImageBrush imgb_c_mode_15_b10 = new();
 
@@ -4412,6 +4471,8 @@ namespace ANB_SSZ.Module_UI
         // 動物園科普 - args 會傳入 1, 2, 3, 5
         private void Show_Mode2_B20(int args)
         {
+            //var videoManager1 = new VideoPlayerWindow(3, false);
+            //videoManager1.Show();
             // 顯示底層
             ImageBrush imgb_c_mode_02_b20 = new();
 
@@ -4686,7 +4747,7 @@ namespace ANB_SSZ.Module_UI
         // 9 號相機比較複雜，因為還有旁邊的問題要顯示
         private void showCam9AndQA()
         {
-            /*
+            
             // 根據 liveCam9QAIndex 來顯示圖型
             switch (liveCam9QAIndex)
             {
@@ -4738,7 +4799,7 @@ namespace ANB_SSZ.Module_UI
                     }
                     break;
             }
-            */
+            
             // 依序加一，若超出 3 就歸零
             liveCam9QAIndex += 1;
             if (liveCam9QAIndex == 4)
