@@ -4544,8 +4544,8 @@ namespace ANB_SSZ.Module_UI
         // 花絮影片 - args 會傳入 8, 14, 15, 16
         private void Show_Mode2_B30(int args)
         {
-            var videoManager1 = new VideoPlayerWindow(1, 1);
-            videoManager1.Show();
+            var videoManager2 = new VideoPlayerWindow(1, 1);
+            videoManager2.Show();
 
             // 顯示底層
             ImageBrush imgb_c_mode_02_b30 = new();
