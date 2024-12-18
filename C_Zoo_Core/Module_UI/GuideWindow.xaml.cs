@@ -4449,8 +4449,6 @@ namespace ANB_SSZ.Module_UI
         // 顯示 Mode 1.5 黑熊花絮
         private void Show_Mode15_B10()
         {
-            //var videoManager1 = new VideoPlayerWindow(1, true);
-            //videoManager1.Show();
             // 顯示圖層
             ImageBrush imgb_c_mode_15_b10 = new();
 
@@ -4471,8 +4469,9 @@ namespace ANB_SSZ.Module_UI
         // 動物園科普 - args 會傳入 1, 2, 3, 5
         private void Show_Mode2_B20(int args)
         {
-            //var videoManager1 = new VideoPlayerWindow(3, false);
-            //videoManager1.Show();
+            var videoManager1 = new VideoPlayerWindow(3, 1);
+            videoManager1.Show();
+
             // 顯示底層
             ImageBrush imgb_c_mode_02_b20 = new();
 
@@ -4545,6 +4544,9 @@ namespace ANB_SSZ.Module_UI
         // 花絮影片 - args 會傳入 8, 14, 15, 16
         private void Show_Mode2_B30(int args)
         {
+            var videoManager1 = new VideoPlayerWindow(1, 1);
+            videoManager1.Show();
+
             // 顯示底層
             ImageBrush imgb_c_mode_02_b30 = new();
 
@@ -4562,6 +4564,8 @@ namespace ANB_SSZ.Module_UI
                     case 8:
                         ModeB30MoviePath = new Uri(".\\Image\\ZOO_B_30_05.mp4", UriKind.RelativeOrAbsolute);
                         VideoDisplay99.Source = new BitmapImage(new Uri(".\\Image\\ZOO_B_30_05.mp4", UriKind.RelativeOrAbsolute));
+                        //var videoManager1 = new VideoPlayerWindow(1, 1);
+                        //videoManager1.Show();
                         break;
 
                     case 14:
@@ -5256,7 +5260,7 @@ namespace ANB_SSZ.Module_UI
                 rTSPPlayerWindow9 = new RTSPPlayerWindow(
                         @"C:\Program Files\FFMPEG\ffmpeg-7.1-full_build\bin\ffmpeg.exe", // FFmpeg 路徑
                         9,                                     // RTSP Index (1~9)
-                        true,                                  // 是否顯示圖片
+                        false,                                  // 是否顯示圖片
                         @"D:\50_Repos\C-Sharp\C_Zoo\RTSPClient\ZOO_A_62.png"         // 圖片路徑
                 );
                 //rTSPPlayerWindow9.PointFromScreen(new Point(200, 90));
